@@ -2,14 +2,16 @@ from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QMainWindow, QVBo
 from PyQt5.QtGui import QPixmap
 from PyQt5 import QtWebEngineWidgets
 from PyQt5 import QtCore
+from ContentGenerator import ContentGenerator
+
 
 class ButtonWidget(QWidget):
 	def __init__(self, *args, **kwargs):
 		super(QWidget, self).__init__(*args, **kwargs)
 
-		self.counter = 0
+		self.generator = ContentGenerator(12)
 
-		self.label = QLabel(str(self.counter))
+		self.label = QLabel("-1")
 		button = QPushButton("Click Me!")
 		button.clicked.connect(lambda:self.count())
 
@@ -28,8 +30,7 @@ class ButtonWidget(QWidget):
 		self.setLayout(layout)
 
 	def count(self):
-		self.counter += 1
-		self.label.setText(str(self.counter))
+		self.label.setText(str(self.generator.getNext()))
 
 	def PrintHello(self):
 		print("Hello")
