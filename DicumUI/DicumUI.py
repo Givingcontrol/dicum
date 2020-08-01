@@ -1,11 +1,10 @@
+import glob
+import os
 from functools import partial
 
-import os
-import glob
 from ContentGenerator import ContentGenerator
 from PyQt5 import QtCore
 from PyQt5 import QtWebEngineWidgets
-from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication, QPushButton, QMainWindow, QVBoxLayout, QWidget, QGridLayout
 
 
@@ -42,23 +41,17 @@ class ButtonWidget(QWidget):
 		self.setLayout(layout)
 
 	def get_content(self, pos):
-		kind = ""
-		content = ""
-		try:
-			self.button_array[pos].setEnabled(False)
-			kind, content = self.generator.get_next()
-		except IndexError:
-			print("Array position", pos, "is out of range")
+		self.button_array[pos].setEnabled(False)
 
-		print(content)
-		if kind == "html" or kind == "num":
-			# TODO this works if loaded from file but not from setHtml().
-			# self.view.load(QtCore.QUrl().fromLocalFile("/home/jonas/Projects/dicum/resources/test.html"))
-			path = QUrl("/home/jonas/Projects/dicum")
-			print(path.path())
-			self.view.setHtml(content)
-		elif kind == "url":
+		content_item = self.generator.get_next()
+		if not content_item:
+			return
+		kind, content = content_item
+
+		if kind == "url":
 			self.view.load(QtCore.QUrl(content))
+		elif kind == "num":
+			self.view.setHtml(content)
 		else:
 			print("content kind was not recognized:", kind, content)
 
@@ -78,6 +71,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == '__main__':
 	app = QApplication([])
+	app.setStyleSheet("QPushButton { background-color: blue }")
 
 	main_window = MainWindow()
 	main_window.show()
@@ -88,5 +82,3 @@ if __name__ == '__main__':
 	files = glob.glob('temp/*')
 	for f in files:
 		os.remove(f)
-
-
