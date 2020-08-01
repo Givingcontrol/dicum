@@ -1,5 +1,6 @@
 import csv
 import random
+from jinja2 import Environment, FileSystemLoader
 
 
 class ContentGenerator:
@@ -22,7 +23,7 @@ class ContentGenerator:
 
 	@staticmethod
 	def __get_html_image(path):
-		return path + '<br/><img src="../' + path + '" />'
+		return path + '<br/><img src="../resources/' + path + '" />'
 
 	@staticmethod
 	def __get_html_back():
@@ -32,9 +33,16 @@ class ContentGenerator:
 
 	@staticmethod
 	def __interpret_command(command):
+		template_dir = "resources"
+		env = Environment(loader=FileSystemLoader(template_dir))
+		template = env.get_template("index.html")
+
 		text, kind, time = command
 		if kind == "img":
 			current_file_name = text.replace("/", "")
+			with open("temp/" + current_file_name + ".html", "w") as html_temp_file:
+				html_temp_file.write(template.render(image_filename=text))
+			return "url", "file:///home/jonas/Projects/dicum/temp/" + current_file_name + ".html"
 			with open("temp/" + current_file_name + ".html", "w") as html_temp_file:
 				html_temp_file.write(ContentGenerator.__get_html_base_front() + ContentGenerator.__get_html_image(
 					text) + ContentGenerator.__get_html_back())

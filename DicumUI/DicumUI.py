@@ -32,10 +32,8 @@ class ButtonWidget(QWidget):
 		layout = QVBoxLayout()
 
 		self.view = QtWebEngineWidgets.QWebEngineView()
-		# view.load(QtCore.QUrl().fromLocalFile("/home/jonas/Projects/dicum/resources/test.html"))
-		# view.load(QtCore.QUrl().fromLocalFile("/home/jonas/Projects/resources/chick.jpeg"))
 		self.view.setHtml("Welcome to Dicum")
-		# view.load(QtCore.QUrl("https://google.com"))
+
 		layout.addWidget(self.view)
 		layout.addWidget(self.button_widget)
 		self.setLayout(layout)
@@ -55,9 +53,10 @@ class ButtonWidget(QWidget):
 		else:
 			print("content kind was not recognized:", kind, content)
 
-	@staticmethod
-	def print_hello():
-		print("Hello World")
+
+@staticmethod
+def print_hello():
+	print("Hello World")
 
 
 class MainWindow(QMainWindow):
