@@ -1,14 +1,19 @@
 from functools import partial
 
+import os
+import glob
 from ContentGenerator import ContentGenerator
 from PyQt5 import QtCore
 from PyQt5 import QtWebEngineWidgets
+from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication, QPushButton, QMainWindow, QVBoxLayout, QWidget, QGridLayout
 
 
 class ButtonWidget(QWidget):
 	def __init__(self, *args, **kwargs):
 		super(QWidget, self).__init__(*args, **kwargs)
+
+		reset = QPushButton("Restart")
 
 		self.button_cols = 4
 		self.button_rows = 3
@@ -47,6 +52,10 @@ class ButtonWidget(QWidget):
 
 		print(content)
 		if kind == "html" or kind == "num":
+			# TODO this works if loaded from file but not from setHtml().
+			# self.view.load(QtCore.QUrl().fromLocalFile("/home/jonas/Projects/dicum/resources/test.html"))
+			path = QUrl("/home/jonas/Projects/dicum")
+			print(path.path())
 			self.view.setHtml(content)
 		elif kind == "url":
 			self.view.load(QtCore.QUrl(content))
@@ -74,3 +83,10 @@ if __name__ == '__main__':
 	main_window.show()
 
 	app.exec()
+
+	# clear temp folder
+	files = glob.glob('temp/*')
+	for f in files:
+		os.remove(f)
+
+
