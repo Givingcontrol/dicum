@@ -6,7 +6,6 @@ from jinja2 import Environment, FileSystemLoader
 class ContentGenerator:
 	def __init__(self, size):
 		self.commands = ContentGenerator.__get_commands(size)
-		print(len(self.commands))
 
 	def get_next(self):
 		try:
