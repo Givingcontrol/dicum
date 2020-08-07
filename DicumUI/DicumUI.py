@@ -3,6 +3,7 @@ import os, sys
 from functools import partial
 
 from ContentGenerator import ContentGenerator
+from TimeRestrictor import TimeRestrictor
 from PyQt5 import QtCore
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtWidgets import QApplication, QPushButton, QMainWindow, QVBoxLayout, QWidget, QGridLayout, QSizePolicy
@@ -37,6 +38,7 @@ class MainGameWidget(QWidget):
 		self.setLayout(QVBoxLayout())
 		self.layout().addWidget(self.view)
 		self.layout().addWidget(self.button_widget)
+		self.time_restrictor = TimeRestrictor()
 
 	def get_content(self, pos):
 		self.button_array[pos].setEnabled(False)
@@ -62,7 +64,7 @@ class MainWindow(QMainWindow):
 		self.menuBar().addMenu("Dicum")
 		main_widget = MainGameWidget(self)
 		self.setCentralWidget(main_widget)
-		self.setGeometry(0, 0, 1500, 1150)
+		self.setGeometry(0, 0, 1500, 1250)
 
 		self.show()
 
