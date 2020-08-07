@@ -33,12 +33,12 @@ class MainGameWidget(QWidget):
 
 		# Setting up the view
 		self.view = QtWebEngineWidgets.QWebEngineView()
-		self.view.setHtml('<center style="margin-top:7em">Welcome to Dicum</center>')
 
 		self.setLayout(QVBoxLayout())
 		self.layout().addWidget(self.view)
 		self.layout().addWidget(self.button_widget)
 		self.time_restrictor = TimeRestrictor()
+		self.view.setHtml(self.generator.get_restricted(self.time_restrictor.get_remaining_time()))
 
 	def get_content(self, pos):
 		self.button_array[pos].setEnabled(False)

@@ -1,5 +1,6 @@
 import csv
 import random
+
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -13,6 +14,15 @@ class ContentGenerator:
 		except IndexError:
 			print("get_next failed, no more elements to pop")
 			return None
+
+	@staticmethod
+	def get_restricted(timedelta):
+		time_string = str(timedelta)
+		template_dir = "resources"
+		env = Environment(loader=FileSystemLoader(template_dir))
+		template = env.get_template("restricted.html")
+		content = template.render(restricted_time=time_string)
+		return content
 
 	@staticmethod
 	def __get_html_base_front():
@@ -41,10 +51,6 @@ class ContentGenerator:
 			current_file_name = text.replace("/", "")
 			with open("temp/" + current_file_name + ".html", "w") as html_temp_file:
 				html_temp_file.write(template.render(image_filename=text))
-			return "url", "file:///home/jonas/Projects/dicum/temp/" + current_file_name + ".html"
-			with open("temp/" + current_file_name + ".html", "w") as html_temp_file:
-				html_temp_file.write(ContentGenerator.__get_html_base_front() + ContentGenerator.__get_html_image(
-					text) + ContentGenerator.__get_html_back())
 			return "url", "file:///home/jonas/Projects/dicum/temp/" + current_file_name + ".html"
 		elif kind == "url":
 			return "url", text

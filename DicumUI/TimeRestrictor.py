@@ -7,7 +7,7 @@ class TimeRestrictor():
 		self.TIME_FORMAT = "%y/%m/%d %H:%M:%S"
 
 		self.config_filepath = os.getenv("HOME") + "/.config/dicum"
-		self.close_time = datetime.max
+		self.restriction_endtime = datetime.max
 		self.session_start = datetime.now()
 		if not os.path.isfile(self.config_filepath):
 			with open(self.config_filepath, "w") as file:
@@ -17,7 +17,12 @@ class TimeRestrictor():
 			restriction_time = file.readline()[:-1]
 
 		try:
-			self.close_time = datetime.strptime(restriction_time, self.TIME_FORMAT)
+			self.restriction_endtime = datetime.strptime(restriction_time, self.TIME_FORMAT)
 		except ValueError:
 			print("Restriction time could not be retrieved from storage.")
-			
+
+	def get_remaining_time(self):
+		return self.restriction_endtime - datetime.now()
+
+	def is_restricted(self):
+		return (self.restriction_endtime - datetime.now()).total_seconds() > 0
