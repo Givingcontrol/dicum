@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 .idea/
-resources/
+resources/images/
+*.csv
 test.py
 temp/
