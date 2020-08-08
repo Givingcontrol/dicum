@@ -43,8 +43,8 @@ class MainGameWidget(QWidget):
 		self.layout().addWidget(self.button_widget)
 		self.time_restrictor = TimeRestrictor()
 
+		self.execute()
 		if self.time_restrictor.is_restricted():
-			self.execute()
 			timer = QTimer(self)
 			timer.setInterval(1000)
 			timer.timeout.connect(self.execute)
@@ -68,6 +68,8 @@ class MainGameWidget(QWidget):
 	def execute(self):
 		if self.time_restrictor.is_restricted():
 			self.view.setHtml(self.generator.get_restricted(self.time_restrictor.get_remaining_time()))
+		else:
+			self.view.setHtml(self.generator.get_unrestricted())
 
 
 class MainWindow(QMainWindow):
