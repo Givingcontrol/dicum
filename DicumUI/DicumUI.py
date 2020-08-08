@@ -9,7 +9,8 @@ from ContentGenerator import ContentGenerator
 from TimeRestrictor import TimeRestrictor
 from PyQt5 import QtCore
 from PyQt5 import QtWebEngineWidgets
-from PyQt5.QtWidgets import QApplication, QPushButton, QMainWindow, QVBoxLayout, QWidget, QGridLayout, QSizePolicy
+from PyQt5.QtWidgets import QApplication, QPushButton, QMainWindow, QVBoxLayout, QWidget, QGridLayout, QHBoxLayout, \
+	QSpacerItem, QSizePolicy
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer
 
@@ -24,7 +25,7 @@ class MainGameWidget(QWidget):
 		self.button_array = [QPushButton("x") for i in range(self.button_cols * self.button_rows)]
 
 		self.button_widget = QWidget(self)
-		self.button_widget.setFixedSize(500, 150)
+		self.button_widget.setFixedSize(500, 130)
 		self.button_widget.setLayout(QGridLayout())
 		for row in range(self.button_rows):
 			for col in range(self.button_cols):
@@ -38,16 +39,24 @@ class MainGameWidget(QWidget):
 		# Setting up the view
 		self.view = QtWebEngineWidgets.QWebEngineView()
 
+		self.base_widget = QWidget(self)
+		self.base_widget.setLayout(QHBoxLayout())
+		self.base_widget.setGeometry(0, 0, 0, 130)
+		self.base_widget.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
+		self.base_widget.layout().addItem(QSpacerItem(10, 1, QSizePolicy.Ignored, QSizePolicy.Preferred))
+		self.base_widget.layout().addWidget(self.button_widget)
+		self.base_widget.layout().addItem(QSpacerItem(10, 1, QSizePolicy.Ignored, QSizePolicy.Preferred))
+
 		self.setLayout(QVBoxLayout())
 		self.layout().addWidget(self.view)
-		self.layout().addWidget(self.button_widget)
+		self.layout().addWidget(self.base_widget)
 		self.time_restrictor = TimeRestrictor()
 
-		self.execute()
+		self.update_welcome()
 		if self.time_restrictor.is_restricted():
 			timer = QTimer(self)
 			timer.setInterval(1000)
-			timer.timeout.connect(self.execute)
+			timer.timeout.connect(self.update_welcome, timer)
 			timer.start()
 
 	def get_content(self, pos):
@@ -65,11 +74,13 @@ class MainGameWidget(QWidget):
 		else:
 			print("content kind was not recognized:", kind, content)
 
-	def execute(self):
+	def update_welcome(self, timer=None):
 		if self.time_restrictor.is_restricted():
 			self.view.setHtml(self.generator.get_restricted(self.time_restrictor.get_remaining_time()))
 		else:
 			self.view.setHtml(self.generator.get_unrestricted())
+			if timer:
+				timer.stop()
 
 
 class MainWindow(QMainWindow):
@@ -88,7 +99,7 @@ class MainWindow(QMainWindow):
 def run():
 	app = QApplication([])
 	app.setStyleSheet(
-		"QPushButton { background-color: darkred; color: white } QMainWindow { background-color: black }")
+		"QPushButton { background-color: darkred; color: black } QMainWindow { background-color: black }")
 
 	main_window = MainWindow()
 	app.exec()
