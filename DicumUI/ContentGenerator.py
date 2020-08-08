@@ -17,12 +17,18 @@ class ContentGenerator:
 
 	@staticmethod
 	def get_restricted(timedelta):
-		time_string = str(timedelta)
+		time_string = str(timedelta).split(".")[0]
 		template_dir = "resources"
 		env = Environment(loader=FileSystemLoader(template_dir))
 		template = env.get_template("restricted.html")
-		content = template.render(restricted_time=time_string)
-		return content
+		return template.render(restricted_time=time_string)
+
+	@staticmethod
+	def get_unrestricted():
+		template_dir = "resources"
+		env = Environment(loader=FileSystemLoader(template_dir))
+		template = env.get_template("unrestricted.html")
+		return template.render()
 
 	@staticmethod
 	def __get_html_base_front():
