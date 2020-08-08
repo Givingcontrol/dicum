@@ -56,7 +56,7 @@ class MainGameWidget(QWidget):
 		if self.time_restrictor.is_restricted():
 			timer = QTimer(self)
 			timer.setInterval(1000)
-			timer.timeout.connect(self.update_welcome, timer)
+			timer.timeout.connect(lambda: self.update_welcome(timer))
 			timer.start()
 
 	def get_content(self, pos):
@@ -77,10 +77,26 @@ class MainGameWidget(QWidget):
 	def update_welcome(self, timer=None):
 		if self.time_restrictor.is_restricted():
 			self.view.setHtml(self.generator.get_restricted(self.time_restrictor.get_remaining_time()))
+			self.deactivate_buttons()
 		else:
 			self.view.setHtml(self.generator.get_unrestricted())
+			self.activate_buttons()
 			if timer:
 				timer.stop()
+
+	def activate_buttons(self):
+		for button_number in range(self.button_widget.layout().count()):
+			try:
+				self.button_widget.layout().itemAt(button_number).widget().setEnabled(True)
+			except AttributeError:
+				print("Non-button element in button widget, could not be disabled.")
+
+	def deactivate_buttons(self):
+		for button_number in range(self.button_widget.layout().count()):
+			try:
+				self.button_widget.layout().itemAt(button_number).widget().setEnabled(False)
+			except AttributeError:
+				print("Non-button element in button widget, could not be disabled.")
 
 
 class MainWindow(QMainWindow):
