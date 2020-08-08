@@ -1,8 +1,6 @@
 import glob
 import os
 import sys
-import time
-import _thread, threading
 from functools import partial
 
 from ContentGenerator import ContentGenerator
@@ -15,6 +13,12 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer
 
 
+class StyledPushButton(QPushButton):
+	def __init__(self, *args, **kwargs):
+		super(QPushButton, self).__init__(*args, **kwargs)
+		self.setStyleSheet(":enabled { color: white; background-color: darkred } :disabled { color: #222222 }")
+
+
 class MainGameWidget(QWidget):
 	def __init__(self, *args, **kwargs):
 		super(QWidget, self).__init__(*args, **kwargs)
@@ -22,7 +26,7 @@ class MainGameWidget(QWidget):
 		self.button_cols = 4
 		self.button_rows = 3
 		self.generator = ContentGenerator(self.button_cols * self.button_rows)
-		self.button_array = [QPushButton("x") for i in range(self.button_cols * self.button_rows)]
+		self.button_array = [StyledPushButton("x") for i in range(self.button_cols * self.button_rows)]
 
 		self.button_widget = QWidget(self)
 		self.button_widget.setFixedSize(500, 130)
@@ -34,7 +38,8 @@ class MainGameWidget(QWidget):
 				self.button_array[pos].clicked.connect(partial(self.get_content, pos))
 
 		self.button_widget.setSizePolicy(
-			QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding))
+			QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
+			                      QtWidgets.QSizePolicy.MinimumExpanding))
 
 		# Setting up the view
 		self.view = QtWebEngineWidgets.QWebEngineView()
@@ -112,7 +117,7 @@ class MainWindow(QMainWindow):
 		self.show()
 
 
-def run():
+if __name__ == '__main__':
 	app = QApplication([])
 	app.setStyleSheet(
 		"QPushButton { background-color: darkred; color: black } QMainWindow { background-color: black }")
@@ -125,7 +130,3 @@ def run():
 	for f in files:
 		os.remove(f)
 	sys.exit(0)
-
-
-if __name__ == '__main__':
-	run()
