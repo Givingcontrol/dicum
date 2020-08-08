@@ -1,5 +1,8 @@
 import glob
-import os, sys
+import os
+import sys
+import time
+import _thread, threading
 from functools import partial
 
 from ContentGenerator import ContentGenerator
@@ -8,6 +11,7 @@ from PyQt5 import QtCore
 from PyQt5 import QtWebEngineWidgets
 from PyQt5.QtWidgets import QApplication, QPushButton, QMainWindow, QVBoxLayout, QWidget, QGridLayout, QSizePolicy
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import QTimer
 
 
 class MainGameWidget(QWidget):
@@ -38,7 +42,13 @@ class MainGameWidget(QWidget):
 		self.layout().addWidget(self.view)
 		self.layout().addWidget(self.button_widget)
 		self.time_restrictor = TimeRestrictor()
-		self.view.setHtml(self.generator.get_restricted(self.time_restrictor.get_remaining_time()))
+
+		if self.time_restrictor.is_restricted():
+			self.execute()
+			timer = QTimer(self)
+			timer.setInterval(1000)
+			timer.timeout.connect(self.execute)
+			timer.start()
 
 	def get_content(self, pos):
 		self.button_array[pos].setEnabled(False)
@@ -55,6 +65,10 @@ class MainGameWidget(QWidget):
 		else:
 			print("content kind was not recognized:", kind, content)
 
+	def execute(self):
+		if self.time_restrictor.is_restricted():
+			self.view.setHtml(self.generator.get_restricted(self.time_restrictor.get_remaining_time()))
+
 
 class MainWindow(QMainWindow):
 	def __init__(self, *args, **kwargs):
@@ -69,7 +83,7 @@ class MainWindow(QMainWindow):
 		self.show()
 
 
-if __name__ == '__main__':
+def run():
 	app = QApplication([])
 	app.setStyleSheet(
 		"QPushButton { background-color: darkred; color: white } QMainWindow { background-color: black }")
@@ -81,5 +95,8 @@ if __name__ == '__main__':
 	files = glob.glob('temp/*')
 	for f in files:
 		os.remove(f)
+	sys.exit(0)
 
-	sys.exit()
+
+if __name__ == '__main__':
+	run()
