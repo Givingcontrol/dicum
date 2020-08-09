@@ -70,7 +70,7 @@ class MainGameWidget(QWidget):
 		content_item = self.generator.get_next()
 		if not content_item:
 			return
-		kind, content = content_item
+		kind, content, time = content_item
 
 		if kind == "url":
 			self.view.load(QtCore.QUrl(content))
