@@ -31,42 +31,25 @@ class ContentGenerator:
 		return template.render()
 
 	@staticmethod
-	def __get_html_base_front():
-		with open("resources/html_front.html") as html_template:
-			html_base = "".join(html_template.readlines())
-		return html_base
-
-	@staticmethod
-	def __get_html_image(path):
-		return path + '<br/><img src="../resources/' + path + '" />'
-
-	@staticmethod
-	def __get_html_back():
-		with open("resources/html_back.html") as html_template:
-			html_back = "".join(html_template.readlines())
-		return html_back
-
-	@staticmethod
 	def __interpret_command(command):
 		template_dir = "resources"
 		env = Environment(loader=FileSystemLoader(template_dir))
 		template = env.get_template("index.html")
 
-		text, kind, time = command
+		kind, content, time = command
 		if kind == "img":
-			current_file_name = text.replace("/", "")
-			with open("temp/" + current_file_name + ".html", "w") as html_temp_file:
-				html_temp_file.write(template.render(image_filename=text))
-			return "url", "file:///home/jonas/Projects/dicum/temp/" + current_file_name + ".html"
-		elif kind == "url":
-			return "url", text
+			image_file_name = content.replace("/", "")
+			html_file_name = image_file_name.split(".")[0]
+			with open("temp/" + html_file_name + ".html", "w") as html_temp_file:
+				html_temp_file.write(template.render(image_filename=content))
+			return "url", "file:///home/jonas/Projects/dicum/temp/" + html_file_name + ".html", time
 		else:
-			print("Command kind could not be interpreted:", kind, "Full:", command)
+			return command
 
 	@staticmethod
 	def __get_commands(size):
 		commands = [("num", str(i)) for i in range(size)]
-		with open("resources/commands.csv") as csv_file:
+		with open("resources/commands2.csv") as csv_file:
 			reader = csv.reader(csv_file, delimiter=",")
 			for i, row in enumerate(reader):
 				if i < len(commands):
