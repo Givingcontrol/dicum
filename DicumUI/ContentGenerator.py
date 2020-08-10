@@ -7,6 +7,8 @@ from jinja2 import Environment, FileSystemLoader
 class ContentGenerator:
 	def __init__(self, size):
 		self.commands = ContentGenerator.__get_commands(size)
+		template_dir = "resources"
+		self.env = Environment(loader=FileSystemLoader(template_dir))
 
 	def get_next(self):
 		try:
@@ -15,26 +17,25 @@ class ContentGenerator:
 			print("get_next failed, no more elements to pop")
 			return None
 
-	@staticmethod
-	def get_restricted(timedelta):
+	def get_restricted(self, timedelta):
 		time_string = str(timedelta).split(".")[0]
-		template_dir = "resources"
-		env = Environment(loader=FileSystemLoader(template_dir))
-		template = env.get_template("restricted.html")
+		template = self.env.get_template("restricted.html")
 		return template.render(restricted_time=time_string)
 
-	@staticmethod
-	def get_unrestricted():
-		template_dir = "resources"
-		env = Environment(loader=FileSystemLoader(template_dir))
-		template = env.get_template("unrestricted.html")
+	def get_unrestricted(self):
+		template = self.env.get_template("unrestricted.html")
 		return template.render()
+
+	def get_current_restriction(self, restriction_time):
+		time_string = str(restriction_time).split(".")[0]
+		template = self.env.get_template("restriction_time.html")
+		return template.render(current_restriction_time=time_string)
 
 	@staticmethod
 	def __interpret_command(command):
 		template_dir = "resources"
 		env = Environment(loader=FileSystemLoader(template_dir))
-		template = env.get_template("index.html")
+		template = env.get_template("plain_image.html")
 
 		kind, content, time = command
 		if kind == "img":

@@ -38,8 +38,7 @@ class MainGameWidget(QWidget):
 				self.button_array[pos].clicked.connect(partial(self.get_content, pos))
 
 		self.button_widget.setSizePolicy(
-			QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding,
-			                      QtWidgets.QSizePolicy.MinimumExpanding))
+			QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding))
 
 		# Setting up the view
 		self.view = QtWebEngineWidgets.QWebEngineView()
@@ -75,7 +74,8 @@ class MainGameWidget(QWidget):
 		if kind == "url":
 			self.view.load(QtCore.QUrl(content))
 		elif kind == "num":
-			self.view.setHtml(content)
+			current_restriction_time = self.time_restrictor.update_restriction_time(content)
+			self.view.setHtml(self.generator.get_current_restriction(current_restriction_time))
 		else:
 			print("content kind was not recognized:", kind, content)
 
