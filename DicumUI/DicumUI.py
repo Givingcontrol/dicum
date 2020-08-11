@@ -20,12 +20,12 @@ class StyledPushButton(QPushButton):
 
 
 class MainGameWidget(QWidget):
-	def __init__(self, *args, **kwargs):
-		super(QWidget, self).__init__(*args, **kwargs)
+	def __init__(self, commands_file):
+		super(QWidget, self).__init__()
 
 		self.button_cols = 4
 		self.button_rows = 3
-		self.generator = ContentGenerator(self.button_cols * self.button_rows)
+		self.generator = ContentGenerator(self.button_cols * self.button_rows, commands_file)
 		self.button_array = [StyledPushButton("x") for i in range(self.button_cols * self.button_rows)]
 
 		self.button_widget = QWidget(self)
@@ -110,7 +110,7 @@ class MainWindow(QMainWindow):
 
 		self.setWindowTitle("Dicum")
 		self.menuBar().addMenu("Dicum")
-		main_widget = MainGameWidget(self)
+		main_widget = MainGameWidget(sys.argv[1])
 		self.setCentralWidget(main_widget)
 		self.setGeometry(0, 0, 1500, 1250)
 
@@ -121,7 +121,6 @@ if __name__ == '__main__':
 	app = QApplication([])
 	app.setStyleSheet(
 		"QPushButton { background-color: darkred; color: black } QMainWindow { background-color: black }")
-
 	main_window = MainWindow()
 	app.exec()
 
