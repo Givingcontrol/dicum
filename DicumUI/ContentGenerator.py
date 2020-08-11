@@ -6,10 +6,13 @@ from jinja2 import Environment, FileSystemLoader
 
 
 class ContentGenerator:
-	def __init__(self, size, commands_filename):
+	def __init__(self, commands_filename):
 		resource_dir = "resources"
 		self.env = Environment(loader=FileSystemLoader(resource_dir))
-		self.commands = self.__get_commands(size, os.path.join(commands_filename))
+		self.commands = self.__get_commands(os.path.join(commands_filename))
+
+	def get_size(self):
+		return len(self.commands)
 
 	def get_next(self):
 		try:
@@ -49,13 +52,12 @@ class ContentGenerator:
 			return command
 
 	@staticmethod
-	def __get_commands(size, commands_filename):
-		commands = [("num", str(i)) for i in range(size)]
+	def __get_commands(commands_filename):
+		commands = []
 		with open(commands_filename) as csv_file:
 			reader = csv.reader(csv_file, delimiter=",")
-			for i, row in enumerate(reader):
-				if i < len(commands):
-					commands[i] = ContentGenerator.__interpret_command(row)
+			for row in reader:
+				commands.append(ContentGenerator.__interpret_command(row))
 
 		random.shuffle(commands)
 		return commands

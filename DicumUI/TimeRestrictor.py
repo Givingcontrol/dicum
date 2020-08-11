@@ -8,7 +8,7 @@ class TimeRestrictor():
 		self.TIME_FORMAT = "%y/%m/%d %H:%M:%S"
 		self.BASE_FORMAT = "%H:%M:%S"
 
-		self.current_restriction_time = timedelta(seconds=60 * 60)
+		self.current_restriction_time = timedelta(hours=1)
 
 		self.config_filepath = os.getenv("HOME") + "/.config/dicum"
 		self.restriction_endtime = datetime.max
@@ -31,7 +31,9 @@ class TimeRestrictor():
 	def is_restricted(self):
 		return (self.restriction_endtime - datetime.now()).total_seconds() > 0
 
-	def store_restriction_time(self, timestamp):
+	def store_restriction_time(self, timestamp=None):
+		if not timestamp:
+			timestamp = datetime.now() + self.current_restriction_time
 		with open(self.config_filepath, "r+") as file:
 			file.seek(0)
 			file.write(timestamp.strftime(self.TIME_FORMAT))
