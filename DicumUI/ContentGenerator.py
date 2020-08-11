@@ -6,10 +6,10 @@ from jinja2 import Environment, FileSystemLoader
 
 
 class ContentGenerator:
-	def __init__(self, size):
-		template_dir = "resources"
-		self.env = Environment(loader=FileSystemLoader(template_dir))
-		self.commands = self.__get_commands(size)
+	def __init__(self, size, commands_filename):
+		resource_dir = "resources"
+		self.env = Environment(loader=FileSystemLoader(resource_dir))
+		self.commands = self.__get_commands(size, os.path.join(commands_filename))
 
 	def get_next(self):
 		try:
@@ -49,9 +49,9 @@ class ContentGenerator:
 			return command
 
 	@staticmethod
-	def __get_commands(size):
+	def __get_commands(size, commands_filename):
 		commands = [("num", str(i)) for i in range(size)]
-		with open("resources/commands2.csv") as csv_file:
+		with open(commands_filename) as csv_file:
 			reader = csv.reader(csv_file, delimiter=",")
 			for i, row in enumerate(reader):
 				if i < len(commands):
