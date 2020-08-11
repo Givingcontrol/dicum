@@ -27,7 +27,7 @@ class ContentGenerator:
 		return template.render()
 
 	def get_current_restriction(self, restriction_time):
-		time_string = str(restriction_time).split(".")[0]
+		time_string = str(restriction_time).split(":")[0] + " hours"
 		template = self.env.get_template("restriction_time.html")
 		return template.render(current_restriction_time=time_string)
 

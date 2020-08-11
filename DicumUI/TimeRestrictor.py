@@ -1,11 +1,12 @@
 import os
-from datetime import datetime, timedelta
+import re
+from datetime import datetime, timedelta, time
 
 
 class TimeRestrictor():
 	def __init__(self):
 		self.TIME_FORMAT = "%y/%m/%d %H:%M:%S"
-		self.BASE_FORMAT = "%d %H:%M:%S"
+		self.BASE_FORMAT = "%H:%M:%S"
 
 		self.current_restriction_time = timedelta(seconds=60 * 60)
 
@@ -36,12 +37,15 @@ class TimeRestrictor():
 			file.write(timestamp.strftime(self.TIME_FORMAT))
 
 	def update_restriction_time(self, time_string):
-		try:
-			t = datetime.strptime(time_string, self.BASE_FORMAT)
-		except ValueError:
-			print("restriction time could not be updated. Format does not fit:", time_string, "does not fit",
-			      self.BASE_FORMAT)
-			return self.current_restriction_time
-		delta = timedelta(days=t.day, hours=t.hour, minutes=t.minute, seconds=t.seconds)
+		delta = self.parse_time(time_string)
 		self.current_restriction_time += delta
 		return self.current_restriction_time
+
+	@staticmethod
+	def parse_time(time_string):
+		time_delta = timedelta()
+		try:
+			time_delta = timedelta(hours=int(time_string))
+		except ValueError:
+			print("Time string could not be parsed to integer (hours):", time_string)
+		return time_delta
