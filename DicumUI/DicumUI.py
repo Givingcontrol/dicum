@@ -12,6 +12,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer
 
 from ContentGenerator import ContentGenerator
+from Configuration import Configuration
 from TimeRestrictor import TimeRestrictor
 
 
@@ -21,23 +22,12 @@ class StyledPushButton(QPushButton):
 		self.setStyleSheet(":enabled { color: white; background-color: darkred } :disabled { color: #222222 }")
 
 
-class Configuration():
-	def __init__(self):
-		self.lock_limit = 3
-		self.unlock_limit = 3
-
-
 class MainGameWidget(QWidget):
 	def __init__(self, commands_file):
 		super(QWidget, self).__init__()
 		self.commands_file = commands_file  # store filename for reset
-
 		self.__reset()
-
-		self.button_array = [StyledPushButton("x") for i in range(self.generator.get_size())]
-
 		self.__setup_ui()
-
 		self.__run_ui()
 
 	def __run_ui(self):
@@ -51,12 +41,13 @@ class MainGameWidget(QWidget):
 	def __reset(self):
 		self.lock_counter = 0
 		self.unlock_counter = 0
-		self.config = Configuration()
 		self.time_restrictor = TimeRestrictor()
 		self.generator = ContentGenerator(self.commands_file)
 
 	def __setup_ui(self):
 		# calculate button row and column length based on number of commands
+		self.button_array = [StyledPushButton("x") for i in range(self.generator.get_size())]
+
 		self.button_rows = self.isqrt(self.generator.get_size())
 		self.button_cols = self.button_rows if self.button_rows * (
 				self.button_rows + 1) > self.generator.get_size() else self.button_rows + 1
@@ -104,11 +95,11 @@ class MainGameWidget(QWidget):
 		elif kind == "lock":
 			if content == "lock":
 				self.lock_counter += 1
-				if self.lock_counter >= self.config.lock_limit:
+				if self.lock_counter >= Configuration().lock_limit:
 					self.start_restriction()
 			elif content == "unlock":
 				self.unlock_counter += 1
-				if self.unlock_counter >= self.config.unlock_limit:
+				if self.unlock_counter >= Configuration().unlock_limit:
 					self.stop_restriction()
 			else:
 				print("lock value invalid, ignoring")

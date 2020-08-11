@@ -1,16 +1,18 @@
 import os
-import re
-from datetime import datetime, timedelta, time
+
+from datetime import datetime, timedelta
+
+from Configuration import Configuration
 
 
 class TimeRestrictor():
 	def __init__(self):
-		self.TIME_FORMAT = "%y/%m/%d %H:%M:%S"
+		self.TIME_FORMAT = Configuration().TIME_FORMAT
 		self.BASE_FORMAT = "%H:%M:%S"
 
 		self.current_restriction_time = timedelta(hours=1)
 
-		self.config_filepath = os.getenv("HOME") + "/.config/dicum"
+		self.config_filepath = Configuration().lock_time_location
 		self.restriction_endtime = datetime.max
 		self.session_start = datetime.now()
 		if not os.path.isfile(self.config_filepath):
