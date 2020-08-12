@@ -52,7 +52,6 @@ class ContentGenerator:
 			html_file_name = img_file_name.split(".")[0]
 			html_file_path = os.path.join(Configuration().TEMP_LOCATION, html_file_name + ".html")
 			with open(html_file_path, "w") as html_temp_file:
-				print(template.render(image_filename=img_file_path))
 				html_temp_file.write(template.render(image_filename=img_file_path))
 			return "url", "file://" + os.path.join(Configuration().TEMP_LOCATION, html_file_name + ".html"), time
 		else:
