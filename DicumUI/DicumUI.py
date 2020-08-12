@@ -4,11 +4,9 @@ import sys
 from functools import partial
 from datetime import datetime
 
-from PyQt5 import QtCore
-from PyQt5 import QtWebEngineWidgets
+from PyQt5 import QtCore, QtWebEngineWidgets, QtWidgets, QtGui
 from PyQt5.QtWidgets import QApplication, QPushButton, QMainWindow, QVBoxLayout, QWidget, QGridLayout, QHBoxLayout, \
-	QSpacerItem, QSizePolicy
-from PyQt5 import QtWidgets
+	QSpacerItem, QSizePolicy, QLabel
 from PyQt5.QtCore import QTimer
 
 from ContentGenerator import ContentGenerator
@@ -20,6 +18,31 @@ class StyledPushButton(QPushButton):
 	def __init__(self, *args, **kwargs):
 		super(QPushButton, self).__init__(*args, **kwargs)
 		self.setStyleSheet(":enabled { color: white; background-color: darkred } :disabled { color: #222222 }")
+
+
+class LockCounterWidget(QWidget):
+	def __init__(self):
+		super(QWidget, self).__init__()
+		self.setLayout(QHBoxLayout(self))
+		pic = QLabel(self)
+		pic.setPixmap(QtGui.QPixmap("resources/icons/lock_icon_closed_64.png"))
+		pic = QLabel(self)
+		pic.setPixmap(QtGui.QPixmap("resources/icons/lock_icon_closed_64.png"))
+		pic = QLabel(self)
+		pic.setPixmap(QtGui.QPixmap("resources/icons/lock_icon_closed_64.png"))
+		pic = QLabel(self)
+		pic.setPixmap(QtGui.QPixmap("resources/icons/lock_icon_closed_64.png"))
+		self.setGeometry(0, 0, 64 * 4, 64)
+		self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
+
+		self.layout().addItem(QSpacerItem(10, 1, QSizePolicy.Ignored, QSizePolicy.Preferred))
+		self.layout().addWidget(pic)
+		self.layout().addItem(QSpacerItem(10, 1, QSizePolicy.Ignored, QSizePolicy.Preferred))
+
+
+# self.lbl3.move(0, 190)
+# self.SketchPad.resize(250, 80)
+# self.SketchPad.move(0, 220)
 
 
 class MainGameWidget(QWidget):
@@ -76,6 +99,7 @@ class MainGameWidget(QWidget):
 		self.base_widget.layout().addItem(QSpacerItem(10, 1, QSizePolicy.Ignored, QSizePolicy.Preferred))
 
 		self.setLayout(QVBoxLayout())
+		self.layout().addWidget(LockCounterWidget())
 		self.layout().addWidget(self.view)
 		self.layout().addWidget(self.base_widget)
 
@@ -93,6 +117,7 @@ class MainGameWidget(QWidget):
 			current_restriction_time = self.time_restrictor.update_restriction_time(content)
 			self.view.setHtml(self.generator.get_current_restriction(current_restriction_time))
 		elif kind == "lock":
+			# TODO generate content for locks
 			if content == "lock":
 				self.lock_counter += 1
 				if self.lock_counter >= Configuration().LOCK_LIMIT:
@@ -172,9 +197,4 @@ if __name__ == '__main__':
 	main_window = MainWindow()
 	app.exec()
 
-	# TODO does not work
-	files = glob.glob(os.path.join(Configuration().TEMP_LOCATION, "*"))
-	for f in files:
-		# os.remove(f)
-		print(f)
 	sys.exit(0)

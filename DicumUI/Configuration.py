@@ -4,8 +4,8 @@ import os
 class Configuration:
 	class __Configuration:
 		def __init__(self):
-			self.LOCK_LIMIT = 3
-			self.UNLOCK_LIMIT = 3
+			self.LOCK_LIMIT = 2
+			self.UNLOCK_LIMIT = 2
 			self.TIME_FORMAT = "%y/%m/%d %H:%M:%S"
 
 			if os.name == "posix":
