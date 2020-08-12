@@ -7,12 +7,14 @@ class Configuration:
 			self.LOCK_LIMIT = 3
 			self.UNLOCK_LIMIT = 3
 			self.TIME_FORMAT = "%y/%m/%d %H:%M:%S"
-			
+
 			if os.name == "posix":
 				self.TEMP_LOCATION = "/tmp/.dicum"
-				self.LOCK_TIME_LOCATION = os.getenv("HOME") + "/.config/dicum"
+				self.TEMP_IMAGES = os.path.join(self.TEMP_LOCATION, "images")
+				self.LOCK_TIME_LOCATION = "/var/dicum/dicum"
 				try:
 					os.makedirs(self.TEMP_LOCATION)
+					os.makedirs(self.TEMP_IMAGES)
 				except FileExistsError:
 					pass
 			else:

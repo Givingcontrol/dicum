@@ -95,11 +95,11 @@ class MainGameWidget(QWidget):
 		elif kind == "lock":
 			if content == "lock":
 				self.lock_counter += 1
-				if self.lock_counter >= Configuration().lock_limit:
+				if self.lock_counter >= Configuration().LOCK_LIMIT:
 					self.start_restriction()
 			elif content == "unlock":
 				self.unlock_counter += 1
-				if self.unlock_counter >= Configuration().unlock_limit:
+				if self.unlock_counter >= Configuration().UNLOCK_LIMIT:
 					self.stop_restriction()
 			else:
 				print("lock value invalid, ignoring")
@@ -172,8 +172,9 @@ if __name__ == '__main__':
 	main_window = MainWindow()
 	app.exec()
 
-	# clear temp folder
-	files = glob.glob('temp/*')
+	# TODO does not work
+	files = glob.glob(os.path.join(Configuration().TEMP_LOCATION, "*"))
 	for f in files:
-		os.remove(f)
+		# os.remove(f)
+		print(f)
 	sys.exit(0)
