@@ -12,7 +12,7 @@ class TimeRestrictor():
 
 		self.current_restriction_time = timedelta(hours=1)
 
-		self.config_filepath = Configuration().lock_time_location
+		self.config_filepath = Configuration().LOCK_TIME_LOCATION
 		self.restriction_endtime = datetime.max
 		self.session_start = datetime.now()
 		if not os.path.isfile(self.config_filepath):

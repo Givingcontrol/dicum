@@ -1,8 +1,11 @@
 import csv
 import random
 import os
+from shutil import copy2
 
 from jinja2 import Environment, FileSystemLoader
+
+from Configuration import Configuration
 
 
 class ContentGenerator:
@@ -43,11 +46,15 @@ class ContentGenerator:
 
 		kind, content, time = command
 		if kind == "img":
-			image_file_name = content.replace("/", "")
-			html_file_name = image_file_name.split(".")[0]
-			with open("temp/" + html_file_name + ".html", "w") as html_temp_file:
-				html_temp_file.write(template.render(image_filename=content))
-			return "url", "file:///home/jonas/Projects/dicum/temp/" + html_file_name + ".html", time
+			img_file_name = content.strip()
+			copy2("resources/images/" + img_file_name, Configuration().TEMP_IMAGES + "/")
+			img_file_path = os.path.join(Configuration().TEMP_IMAGES, img_file_name)
+			html_file_name = img_file_name.split(".")[0]
+			html_file_path = os.path.join(Configuration().TEMP_LOCATION, html_file_name + ".html")
+			with open(html_file_path, "w") as html_temp_file:
+				print(template.render(image_filename=img_file_path))
+				html_temp_file.write(template.render(image_filename=img_file_path))
+			return "url", "file://" + os.path.join(Configuration().TEMP_LOCATION, html_file_name + ".html"), time
 		else:
 			return command
 
