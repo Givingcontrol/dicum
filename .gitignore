@@ -132,3 +132,6 @@ dmypy.json
 *.csv
 test.py
 temp/
+
+# gimp files
+*.xcf

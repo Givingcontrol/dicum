@@ -2,7 +2,7 @@ import glob
 import os
 import sys
 from functools import partial
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from PyQt5 import QtCore, QtWebEngineWidgets, QtWidgets, QtGui
 from PyQt5.QtWidgets import QApplication, QPushButton, QMainWindow, QVBoxLayout, QWidget, QGridLayout, QHBoxLayout, \
@@ -21,28 +21,57 @@ class StyledPushButton(QPushButton):
 
 
 class LockCounterWidget(QWidget):
-	def __init__(self):
+	def __init__(self, num_locked=Configuration().LOCK_LIMIT, num_unlocked=Configuration().UNLOCK_LIMIT):
 		super(QWidget, self).__init__()
 		self.setLayout(QHBoxLayout(self))
-		pic = QLabel(self)
-		pic.setPixmap(QtGui.QPixmap("resources/icons/lock_icon_closed_64.png"))
-		pic = QLabel(self)
-		pic.setPixmap(QtGui.QPixmap("resources/icons/lock_icon_closed_64.png"))
-		pic = QLabel(self)
-		pic.setPixmap(QtGui.QPixmap("resources/icons/lock_icon_closed_64.png"))
-		pic = QLabel(self)
-		pic.setPixmap(QtGui.QPixmap("resources/icons/lock_icon_closed_64.png"))
 		self.setGeometry(0, 0, 64 * 4, 64)
-		self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
+		self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
 
-		self.layout().addItem(QSpacerItem(10, 1, QSizePolicy.Ignored, QSizePolicy.Preferred))
-		self.layout().addWidget(pic)
-		self.layout().addItem(QSpacerItem(10, 1, QSizePolicy.Ignored, QSizePolicy.Preferred))
+		self.locked = [QLabel(self) for i in range(num_locked)]
+		self.unlocked = [QLabel(self) for i in range(num_unlocked)]
+		self.current_locked = len(self.locked) - 1
+		self.current_unlocked = 0
+		self.layout().addItem(QSpacerItem(10, 1, QSizePolicy.Expanding, QSizePolicy.Preferred))
+		for i, label in enumerate(self.locked):
+			self.layout().addWidget(self.locked[i])
+		for i, label in enumerate(self.unlocked):
+			self.layout().addWidget(self.unlocked[i])
 
+		self.reset()
 
-# self.lbl3.move(0, 190)
-# self.SketchPad.resize(250, 80)
-# self.SketchPad.move(0, 220)
+		self.layout().addItem(QSpacerItem(10, 1, QSizePolicy.Expanding, QSizePolicy.Preferred))
+
+	def reset(self):
+		self.current_locked = len(self.locked) - 1
+		self.current_unlocked = 0
+
+		for i, label in enumerate(self.locked):
+			self.locked[i].setPixmap(QtGui.QPixmap("resources/icons/lock_icon_closed_gray_64.png"))
+			self.locked[i].setGeometry(0, 0, 64, 64)
+		for i, label in enumerate(self.unlocked):
+			self.unlocked[i].setPixmap(QtGui.QPixmap("resources/icons/lock_icon_open_gray_64.png"))
+			self.unlocked[i].setGeometry(0, 0, 64, 64)
+
+	def add_locked(self):
+		try:
+			self.locked[self.current_locked].setPixmap(QtGui.QPixmap("resources/icons/lock_icon_closed_64.png"))
+		except IndexError:
+			print("exceeding locked images range. there is a bug somewhere...")
+			return
+		self.current_locked -= 1
+
+	def add_unlocked(self):
+		try:
+			self.unlocked[self.current_unlocked].setPixmap(QtGui.QPixmap("resources/icons/lock_icon_open_64.png"))
+		except IndexError:
+			print("exceeding unlocked images range. there is a bug somewhere...")
+			return
+		self.current_unlocked += 1
+
+	def set_locked(self):
+		for i, label in enumerate(self.locked):
+			self.locked[i].setPixmap(QtGui.QPixmap("resources/icons/lock_icon_closed_64.png"))
+			self.locked[i].setGeometry(0, 0, 64, 64)
 
 
 class MainGameWidget(QWidget):
@@ -56,6 +85,7 @@ class MainGameWidget(QWidget):
 	def __run_ui(self):
 		self.update_welcome()
 		if self.time_restrictor.is_restricted():
+			self.lock_counter_widget.set_locked()
 			timer = QTimer(self)
 			timer.setInterval(1000)
 			timer.timeout.connect(lambda: self.update_welcome(timer))
@@ -65,6 +95,9 @@ class MainGameWidget(QWidget):
 		self.lock_counter = 0
 		self.unlock_counter = 0
 		self.time_restrictor = TimeRestrictor()
+		lock_counter = self.findChild(LockCounterWidget, "lock_counter")
+		if lock_counter:
+			lock_counter.reset()
 		self.generator = ContentGenerator(self.commands_file)
 
 	def __setup_ui(self):
@@ -99,7 +132,9 @@ class MainGameWidget(QWidget):
 		self.base_widget.layout().addItem(QSpacerItem(10, 1, QSizePolicy.Ignored, QSizePolicy.Preferred))
 
 		self.setLayout(QVBoxLayout())
-		self.layout().addWidget(LockCounterWidget())
+		self.lock_counter_widget = LockCounterWidget()
+		self.lock_counter_widget.setObjectName("lock_counter")
+		self.layout().addWidget(self.lock_counter_widget)
 		self.layout().addWidget(self.view)
 		self.layout().addWidget(self.base_widget)
 
@@ -120,10 +155,12 @@ class MainGameWidget(QWidget):
 			# TODO generate content for locks
 			if content == "lock":
 				self.lock_counter += 1
+				self.lock_counter_widget.add_locked()
 				if self.lock_counter >= Configuration().LOCK_LIMIT:
 					self.start_restriction()
 			elif content == "unlock":
 				self.unlock_counter += 1
+				self.lock_counter_widget.add_unlocked()
 				if self.unlock_counter >= Configuration().UNLOCK_LIMIT:
 					self.stop_restriction()
 			else:
@@ -138,6 +175,7 @@ class MainGameWidget(QWidget):
 		else:
 			self.view.setHtml(self.generator.get_unrestricted())
 			self.activate_buttons()
+			self.lock_counter_widget.reset()
 			if timer:
 				timer.stop()
 
@@ -183,11 +221,17 @@ class MainWindow(QMainWindow):
 
 		self.setWindowTitle("Dicum")
 		self.menuBar().addMenu("Dicum")
-		main_widget = MainGameWidget(sys.argv[1])
-		self.setCentralWidget(main_widget)
+		self.main_widget = MainGameWidget(sys.argv[1])
+		self.setCentralWidget(self.main_widget)
 		self.setGeometry(0, 0, 1500, 1250)
 
 		self.show()
+
+	def closeEvent(self, event):
+		# do stuff
+		if self.main_widget.time_restrictor.restriction_time_changed:
+			self.main_widget.time_restrictor.store_restriction_time()
+		event.accept()  # let the window close
 
 
 if __name__ == '__main__':
