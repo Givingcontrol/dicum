@@ -11,6 +11,7 @@ class TimeRestrictor():
 		self.BASE_FORMAT = "%H:%M:%S"
 
 		self.current_restriction_time = timedelta(hours=1)
+		self.restriction_time_changed = False
 
 		self.config_filepath = Configuration().LOCK_TIME_LOCATION
 		self.restriction_endtime = datetime.max
@@ -41,6 +42,7 @@ class TimeRestrictor():
 			file.write(timestamp.strftime(self.TIME_FORMAT))
 
 	def update_restriction_time(self, time_string):
+		self.restriction_time_changed = True
 		delta = self.parse_time(time_string)
 		self.current_restriction_time += delta
 		return self.current_restriction_time
