@@ -31,15 +31,14 @@ class MainGameWidget(QWidget):
 		self.update_welcome()
 		if self.time_restrictor.is_restricted():
 			self.lock_counter_widget.set_locked()
-			self.timer.setInterval(1000)
-			self.timer.timeout.connect(lambda: self.update_welcome())
-			self.timer.start()
 
 	def __reset(self):
 		self.lock_counter = 0
 		self.unlock_counter = 0
 		self.time_restrictor = TimeRestrictor()
 		self.timer = QTimer(self)
+		self.timer.timeout.connect(lambda: self.update_welcome())
+
 		lock_counter = self.findChild(LockCounterWidget, "lock_counter")
 		if lock_counter:
 			lock_counter.reset()
@@ -116,12 +115,11 @@ class MainGameWidget(QWidget):
 
 	def update_welcome(self, timer=None):
 		if self.time_restrictor.is_restricted():
-			print("Updating Welcome")
-			self.view.setHtml(self.generator.get_restricted(self.time_restrictor.get_remaining_time()),
+			self.view.setHtml(self.generator.get_restricted(self.time_restrictor.get_end_time_iso()),
 			                  QUrl("file://" + Configuration().TEMP_IMAGES + "/"))
 			self.deactivate_buttons()
-			print(self.time_restrictor.get_remaining_time().microseconds)
 			self.timer.setInterval(self.time_restrictor.get_remaining_time().microseconds)
+			self.timer.start()
 		else:
 			self.view.setHtml(self.generator.get_unrestricted(), QUrl("file://" + Configuration().TEMP_IMAGES + "/"))
 			self.activate_buttons()
@@ -189,6 +187,5 @@ if __name__ == '__main__':
 	app.setStyleSheet(
 		"QPushButton { background-color: darkred; color: black } QMainWindow { background-color: black }")
 	main_window = MainWindow()
-	app.exec()
 
-	sys.exit(0)
+	sys.exit(app.exec())

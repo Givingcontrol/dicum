@@ -18,15 +18,18 @@ class TimeRestrictor():
 		self.session_start = datetime.now()
 		if not os.path.isfile(self.config_filepath):
 			with open(self.config_filepath, "w") as file:
-				file.write(datetime.now().strftime(self.TIME_FORMAT))
+				file.write(datetime.now().isoformat())
 
 		with open(self.config_filepath, "r") as file:
 			restriction_time = file.readline().strip()
 
 		try:
-			self.restriction_endtime = datetime.strptime(restriction_time, self.TIME_FORMAT)
+			self.restriction_endtime = datetime.fromisoformat(restriction_time)
 		except ValueError:
 			print("Restriction time could not be retrieved from storage.")
+
+	def get_end_time_iso(self):
+		return self.restriction_endtime.isoformat()
 
 	def get_remaining_time(self):
 		return self.restriction_endtime - datetime.now()
@@ -39,7 +42,7 @@ class TimeRestrictor():
 			timestamp = datetime.now() + self.current_restriction_time
 		with open(self.config_filepath, "r+") as file:
 			file.seek(0)
-			file.write(timestamp.strftime(self.TIME_FORMAT))
+			file.write(timestamp.isoformat())
 
 	def update_restriction_time(self, time_string):
 		self.restriction_time_changed = True
