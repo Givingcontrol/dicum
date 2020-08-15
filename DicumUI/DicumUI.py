@@ -95,12 +95,11 @@ class MainGameWidget(QWidget):
 		elif kind == "html":
 			self.view.setHtml(content, QUrl(Configuration().HTML_REL_PATH))
 		elif kind == "num":
-			current_restriction_time = self.time_restrictor.update_restriction_time(content)
-			self.view.setHtml(self.generator.get_current_restriction(self.time_restrictor.current_restriction_time,
-			                                                         text="I've added " + content + "h to your Lockup!"),
-			                  QUrl(Configuration().HTML_REL_PATH))
+			self.view.setHtml(
+				self.generator.get_current_restriction(self.time_restrictor.update_restriction_time(content),
+				                                       text="I've added " + content + "h to your Lockup!"),
+				QUrl(Configuration().HTML_REL_PATH))
 		elif kind == "lock":
-			# TODO generate content for locks
 			if content == "lock":
 				self.lock_counter += 1
 				self.lock_counter_widget.add_locked()
