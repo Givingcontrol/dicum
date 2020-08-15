@@ -4,10 +4,16 @@
     <style>
         body {background-image:url('{{ background_image }}'); background-size:cover; color: lightgray;font-family: Love Story Rough; font-size:26pt;}
     </style>
+        <script type="text/javascript" src='../js/updateTime.js'> </script>
 </head>
 <body>
-    <center style="margin-top:7em">
+    <center  id="text" style="margin-top:7em">
         Welcome to Dicum<br/>You are restricted for {{ restricted_time }}
     </center>
+
+    <script>
+      updateTime("2020-08-15 17:00:00", "text");
+    </script>
+
 </body>
 </html>
