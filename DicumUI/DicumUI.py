@@ -92,10 +92,13 @@ class MainGameWidget(QWidget):
 
 		if kind == "url":
 			self.view.load(QtCore.QUrl(content))
+		elif kind == "html":
+			self.view.setHtml(content, QUrl(Configuration().HTML_REL_PATH))
 		elif kind == "num":
 			current_restriction_time = self.time_restrictor.update_restriction_time(content)
-			self.view.setHtml(self.generator.get_current_restriction(current_restriction_time),
-			                  QUrl("file://" + Configuration().TEMP_IMAGES + "/"))
+			self.view.setHtml(self.generator.get_current_restriction(self.time_restrictor.current_restriction_time,
+			                                                         text="I've added " + content + "h to your Lockup!"),
+			                  QUrl(Configuration().HTML_REL_PATH))
 		elif kind == "lock":
 			# TODO generate content for locks
 			if content == "lock":
@@ -103,11 +106,22 @@ class MainGameWidget(QWidget):
 				self.lock_counter_widget.add_locked()
 				if self.lock_counter >= Configuration().LOCK_LIMIT:
 					self.start_restriction()
+				else:
+					self.view.setHtml(
+						self.generator.get_current_restriction(self.time_restrictor.current_restriction_time,
+						                                       text="How unfortunate, you picked a Lock!"),
+						QUrl(Configuration().HTML_REL_PATH))
+
 			elif content == "unlock":
 				self.unlock_counter += 1
 				self.lock_counter_widget.add_unlocked()
 				if self.unlock_counter >= Configuration().UNLOCK_LIMIT:
 					self.stop_restriction()
+				else:
+					self.view.setHtml(
+						self.generator.get_current_restriction(self.time_restrictor.current_restriction_time,
+						                                       text="Lucky you! Maybe I'll release you this time."),
+						QUrl(Configuration().HTML_REL_PATH))
 			else:
 				print("lock value invalid, ignoring")
 		else:
@@ -116,12 +130,12 @@ class MainGameWidget(QWidget):
 	def update_welcome(self, timer=None):
 		if self.time_restrictor.is_restricted():
 			self.view.setHtml(self.generator.get_restricted(self.time_restrictor.get_end_time_iso()),
-			                  QUrl("file://" + Configuration().TEMP_IMAGES + "/"))
+			                  QUrl(Configuration().HTML_REL_PATH))
 			self.deactivate_buttons()
 			self.timer.setInterval(self.time_restrictor.get_remaining_time().microseconds)
 			self.timer.start()
 		else:
-			self.view.setHtml(self.generator.get_unrestricted(), QUrl("file://" + Configuration().TEMP_IMAGES + "/"))
+			self.view.setHtml(self.generator.get_unrestricted(), QUrl(Configuration().HTML_REL_PATH))
 			self.activate_buttons()
 			self.lock_counter_widget.reset()
 			if timer:
