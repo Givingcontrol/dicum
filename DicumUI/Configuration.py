@@ -8,18 +8,21 @@ class Configuration:
 			self.UNLOCK_LIMIT = 2
 			self.TIME_FORMAT = "%y/%m/%d %H:%M:%S"
 
-			if os.name == "posix":
-				self.TEMP_LOCATION = "/tmp/.dicum"
-				self.TEMP_IMAGES = os.path.join(self.TEMP_LOCATION, "images")
-				self.LOCK_TIME_LOCATION = "/var/dicum/dicum"
-				try:
-					os.makedirs(self.TEMP_LOCATION)
-					os.makedirs(self.TEMP_IMAGES)
-				except FileExistsError:
-					pass
-			else:
+			if os.name != "posix":
 				print("Currently, only linux systems are supported.")
 				exit(1)
+				
+			self.TEMP_LOCATION = "/tmp/.dicum"
+			self.TEMP_IMAGES = os.path.join(self.TEMP_LOCATION, "images")
+			self.LOCK_TIME_LOCATION = "/var/dicum/dicum"
+			try:
+				os.makedirs(self.TEMP_LOCATION)
+				os.makedirs(self.TEMP_IMAGES)
+			except FileExistsError:
+				pass
+
+			if not os.path.isfile(self.LOCK_TIME_LOCATION):
+				print("Dicum time file does not exist.")
 
 		def __str__(self):
 			return repr(self) + self.val

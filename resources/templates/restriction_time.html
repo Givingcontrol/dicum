@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<body style="background-color:black">
-    <center style="background-color: black; color: lightgray; margin-top:7em">
-        Your current restriction Time: {{ current_restriction_time }}
+<head>
+    <style>
+        body {background-image:url('{{ background_image }}'); background-size:cover; color: lightgray; font-family: Love Story Rough; font-size:26pt;}
+    </style>
+</head>
+<body>
+    <center style="margin-top:7em">
+        Your next restriction will take {{ current_restriction_time }}
     </center>
 </body>
 </html>

@@ -1,77 +1,22 @@
-import glob
-import os
 import sys
 from functools import partial
-from datetime import datetime, timedelta
+from datetime import datetime
 
-from PyQt5 import QtCore, QtWebEngineWidgets, QtWidgets, QtGui
+from PyQt5 import QtCore, QtWebEngineWidgets, QtWidgets
 from PyQt5.QtWidgets import QApplication, QPushButton, QMainWindow, QVBoxLayout, QWidget, QGridLayout, QHBoxLayout, \
-	QSpacerItem, QSizePolicy, QLabel
-from PyQt5.QtCore import QTimer
+	QSpacerItem, QSizePolicy
+from PyQt5.QtCore import QTimer, QUrl
 
 from ContentGenerator import ContentGenerator
 from Configuration import Configuration
 from TimeRestrictor import TimeRestrictor
+from LockCounterWidget import LockCounterWidget
 
 
 class StyledPushButton(QPushButton):
 	def __init__(self, *args, **kwargs):
 		super(QPushButton, self).__init__(*args, **kwargs)
 		self.setStyleSheet(":enabled { color: white; background-color: darkred } :disabled { color: #222222 }")
-
-
-class LockCounterWidget(QWidget):
-	def __init__(self, num_locked=Configuration().LOCK_LIMIT, num_unlocked=Configuration().UNLOCK_LIMIT):
-		super(QWidget, self).__init__()
-		self.setLayout(QHBoxLayout(self))
-		self.setGeometry(0, 0, 64 * 4, 64)
-		self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
-
-		self.locked = [QLabel(self) for i in range(num_locked)]
-		self.unlocked = [QLabel(self) for i in range(num_unlocked)]
-		self.current_locked = len(self.locked) - 1
-		self.current_unlocked = 0
-		self.layout().addItem(QSpacerItem(10, 1, QSizePolicy.Expanding, QSizePolicy.Preferred))
-		for i, label in enumerate(self.locked):
-			self.layout().addWidget(self.locked[i])
-		for i, label in enumerate(self.unlocked):
-			self.layout().addWidget(self.unlocked[i])
-
-		self.reset()
-
-		self.layout().addItem(QSpacerItem(10, 1, QSizePolicy.Expanding, QSizePolicy.Preferred))
-
-	def reset(self):
-		self.current_locked = len(self.locked) - 1
-		self.current_unlocked = 0
-
-		for i, label in enumerate(self.locked):
-			self.locked[i].setPixmap(QtGui.QPixmap("resources/icons/lock_icon_closed_gray_64.png"))
-			self.locked[i].setGeometry(0, 0, 64, 64)
-		for i, label in enumerate(self.unlocked):
-			self.unlocked[i].setPixmap(QtGui.QPixmap("resources/icons/lock_icon_open_gray_64.png"))
-			self.unlocked[i].setGeometry(0, 0, 64, 64)
-
-	def add_locked(self):
-		try:
-			self.locked[self.current_locked].setPixmap(QtGui.QPixmap("resources/icons/lock_icon_closed_64.png"))
-		except IndexError:
-			print("exceeding locked images range. there is a bug somewhere...")
-			return
-		self.current_locked -= 1
-
-	def add_unlocked(self):
-		try:
-			self.unlocked[self.current_unlocked].setPixmap(QtGui.QPixmap("resources/icons/lock_icon_open_64.png"))
-		except IndexError:
-			print("exceeding unlocked images range. there is a bug somewhere...")
-			return
-		self.current_unlocked += 1
-
-	def set_locked(self):
-		for i, label in enumerate(self.locked):
-			self.locked[i].setPixmap(QtGui.QPixmap("resources/icons/lock_icon_closed_64.png"))
-			self.locked[i].setGeometry(0, 0, 64, 64)
 
 
 class MainGameWidget(QWidget):
@@ -150,7 +95,8 @@ class MainGameWidget(QWidget):
 			self.view.load(QtCore.QUrl(content))
 		elif kind == "num":
 			current_restriction_time = self.time_restrictor.update_restriction_time(content)
-			self.view.setHtml(self.generator.get_current_restriction(current_restriction_time))
+			self.view.setHtml(self.generator.get_current_restriction(current_restriction_time),
+			                  QUrl("file://" + Configuration().TEMP_IMAGES + "/"))
 		elif kind == "lock":
 			# TODO generate content for locks
 			if content == "lock":
@@ -170,10 +116,11 @@ class MainGameWidget(QWidget):
 
 	def update_welcome(self, timer=None):
 		if self.time_restrictor.is_restricted():
-			self.view.setHtml(self.generator.get_restricted(self.time_restrictor.get_remaining_time()))
+			self.view.setHtml(self.generator.get_restricted(self.time_restrictor.get_remaining_time()),
+			                  QUrl("file://" + Configuration().TEMP_IMAGES + "/"))
 			self.deactivate_buttons()
 		else:
-			self.view.setHtml(self.generator.get_unrestricted())
+			self.view.setHtml(self.generator.get_unrestricted(), QUrl("file://" + Configuration().TEMP_IMAGES + "/"))
 			self.activate_buttons()
 			self.lock_counter_widget.reset()
 			if timer:
