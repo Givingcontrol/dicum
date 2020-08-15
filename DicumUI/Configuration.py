@@ -16,6 +16,7 @@ class Configuration:
 			self.TEMP_IMAGES = os.path.join(self.TEMP_LOCATION, "images")
 			self.TEMP_SCRIPTS = os.path.join(self.TEMP_LOCATION, "js")
 			self.LOCK_TIME_LOCATION = "/var/dicum/dicum"
+			self.HTML_REL_PATH = "file://" + self.TEMP_LOCATION + "/"
 			try:
 				os.makedirs(self.TEMP_LOCATION)
 				os.makedirs(self.TEMP_IMAGES)

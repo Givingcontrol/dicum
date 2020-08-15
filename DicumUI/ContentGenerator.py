@@ -31,16 +31,16 @@ class ContentGenerator:
 
 	def get_restricted(self, end_time_iso):
 		template = self.env.get_template("templates/restricted.html")
-		return template.render(restricted_time=end_time_iso, background_image="bg03.png")
+		return template.render(restricted_time=end_time_iso, background_image="images/bg03.png")
 
 	def get_unrestricted(self):
 		template = self.env.get_template("templates/unrestricted.html")
-		return template.render(background_image="bg03.png")
+		return template.render(background_image="images/bg03.png")
 
-	def get_current_restriction(self, restriction_time):
+	def get_current_restriction(self, restriction_time, text=""):
 		time_string = str(restriction_time).split(":")[0] + " hours"
 		template = self.env.get_template("templates/restriction_time.html")
-		return template.render(current_restriction_time=time_string, background_image="bg03.png")
+		return template.render(current_restriction_time=time_string, background_image="images/bg03.png", text=text)
 
 	@staticmethod
 	def __interpret_command(command):
@@ -56,12 +56,7 @@ class ContentGenerator:
 					copy2("resources/images/" + img_file_name, Configuration().TEMP_IMAGES + "/")
 				except FileNotFoundError:
 					print("Image file could not be found:", img_file_name)
-			img_file_path = os.path.join(Configuration().TEMP_IMAGES, img_file_name)
-			html_file_name = img_file_name.split(".")[0]
-			html_file_path = os.path.join(Configuration().TEMP_LOCATION, html_file_name + ".html")
-			with open(html_file_path, "w") as html_temp_file:
-				html_temp_file.write(template.render(image_filename=img_file_path))
-			return "url", "file://" + os.path.join(Configuration().TEMP_LOCATION, html_file_name + ".html"), time
+			return "html", template.render(image_filename="images/" + img_file_name), time
 		else:
 			return command
 
