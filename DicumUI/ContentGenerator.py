@@ -29,11 +29,9 @@ class ContentGenerator:
 			print("get_next failed, no more elements to pop")
 			return None
 
-	def get_restricted(self, timedelta):
-		time_string = str(timedelta).split(".")[0]
-		print(time_string)
+	def get_restricted(self, end_time_iso):
 		template = self.env.get_template("templates/restricted.html")
-		return template.render(restricted_time=time_string, background_image="bg03.png")
+		return template.render(restricted_time=end_time_iso, background_image="bg03.png")
 
 	def get_unrestricted(self):
 		template = self.env.get_template("templates/unrestricted.html")

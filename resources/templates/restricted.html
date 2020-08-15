@@ -8,11 +8,10 @@
 </head>
 <body>
     <center  id="text" style="margin-top:7em">
-        Welcome to Dicum<br/>You are restricted for {{ restricted_time }}
     </center>
 
     <script>
-      updateTime("2020-08-15 17:00:00", "text");
+      updateTime("{{ restricted_time }}", "text");
     </script>
 
 </body>
