@@ -31,15 +31,15 @@ class MainGameWidget(QWidget):
 		self.update_welcome()
 		if self.time_restrictor.is_restricted():
 			self.lock_counter_widget.set_locked()
-			timer = QTimer(self)
-			timer.setInterval(1000)
-			timer.timeout.connect(lambda: self.update_welcome(timer))
-			timer.start()
+			self.timer.setInterval(1000)
+			self.timer.timeout.connect(lambda: self.update_welcome())
+			self.timer.start()
 
 	def __reset(self):
 		self.lock_counter = 0
 		self.unlock_counter = 0
 		self.time_restrictor = TimeRestrictor()
+		self.timer = QTimer(self)
 		lock_counter = self.findChild(LockCounterWidget, "lock_counter")
 		if lock_counter:
 			lock_counter.reset()
@@ -116,9 +116,12 @@ class MainGameWidget(QWidget):
 
 	def update_welcome(self, timer=None):
 		if self.time_restrictor.is_restricted():
+			print("Updating Welcome")
 			self.view.setHtml(self.generator.get_restricted(self.time_restrictor.get_remaining_time()),
 			                  QUrl("file://" + Configuration().TEMP_IMAGES + "/"))
 			self.deactivate_buttons()
+			print(self.time_restrictor.get_remaining_time().microseconds)
+			self.timer.setInterval(self.time_restrictor.get_remaining_time().microseconds)
 		else:
 			self.view.setHtml(self.generator.get_unrestricted(), QUrl("file://" + Configuration().TEMP_IMAGES + "/"))
 			self.activate_buttons()

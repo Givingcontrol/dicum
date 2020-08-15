@@ -14,6 +14,11 @@ class ContentGenerator:
 		self.env = Environment(loader=FileSystemLoader(resource_dir))
 		self.commands = self.__get_commands(os.path.join(commands_filename))
 
+		try:
+			copy2("resources/js/updateTime.js", Configuration().TEMP_LOCATION + "/js/updateTime.js")
+		except FileNotFoundeError:
+			print("script file could not be found: updateTime.js")
+
 	def get_size(self):
 		return len(self.commands)
 
@@ -26,6 +31,7 @@ class ContentGenerator:
 
 	def get_restricted(self, timedelta):
 		time_string = str(timedelta).split(".")[0]
+		print(time_string)
 		template = self.env.get_template("templates/restricted.html")
 		return template.render(restricted_time=time_string, background_image="bg03.png")
 
