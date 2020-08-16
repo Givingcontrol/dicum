@@ -16,8 +16,10 @@ class ContentGenerator:
 
 		try:
 			copy2("resources/js/updateTime.js", Configuration().TEMP_LOCATION + "/js/updateTime.js")
+			copy2(os.path.join("resources", Configuration().BG_IMAGE), Configuration().TEMP_IMAGES + "/")
 		except FileNotFoundeError:
-			print("script file could not be found: updateTime.js")
+			print("Content could not be loaded. file not found error")
+			exit(1)
 
 	def get_size(self):
 		return len(self.commands)
@@ -31,16 +33,17 @@ class ContentGenerator:
 
 	def get_restricted(self, end_time_iso):
 		template = self.env.get_template("templates/restricted.html")
-		return template.render(restricted_time=end_time_iso, background_image="images/bg03.png")
+		return template.render(restricted_time=end_time_iso, background_image=Configuration().BG_IMAGE)
 
 	def get_unrestricted(self):
 		template = self.env.get_template("templates/unrestricted.html")
-		return template.render(background_image="images/bg03.png")
+		return template.render(background_image=Configuration().BG_IMAGE)
 
 	def get_current_restriction(self, restriction_time, text=""):
 		time_string = str(restriction_time).split(":")[0] + " hours"
 		template = self.env.get_template("templates/restriction_time.html")
-		return template.render(current_restriction_time=time_string, background_image="images/bg03.png", text=text)
+		return template.render(current_restriction_time=time_string, background_image=Configuration().BG_IMAGE,
+		                       text=text)
 
 	@staticmethod
 	def __interpret_command(command):
