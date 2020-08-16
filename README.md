@@ -34,6 +34,11 @@ In order to run the game create a folder to store the game state
 $ sudo mkdir /var/lib/dicum/
 ```
 
+Install fonts:
+```
+$ rsync -a ../dicum/fonts/ ~/.fonts
+```
+
 Create a csv file that holds all possible actions:
 ```
 $ cd /path/to/game/dicum
@@ -69,5 +74,4 @@ The images (img,pic1.png,0) must exist in `dicum/resources/images/`. Since, I ha
 when you sourced your environment, run the game using
 ```
 $ python DicumUI/DicumUI.py recourses/actions.csv
-``
-
+```
