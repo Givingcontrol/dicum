@@ -2,6 +2,8 @@
 
 Dicum is a small game for tease and denial lovers, that like to get locked up. 
 
+![Game Preview](https://github.com/joka-beep/dicum/blob/master/preview/preview-alpha.png)
+
 ## How does it work?
 
 You get a set of buttons that allow you to activate the next action, like roulette, you don't know what will be your next draw. Possible actions are 
