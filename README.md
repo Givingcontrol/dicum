@@ -29,7 +29,7 @@ If you want to try the game, I might provide you with a test .zip file, however,
 * Source the environment
 * Install requirements from requirements.txt
 
-In order to run the game create a folder to store the game state
+In order to run the game create a folder to store the game state, you might need to edit user priviledges and ownershipt to your current user.
 ```
 $ sudo mkdir /var/lib/dicum/
 ```
@@ -66,7 +66,7 @@ lock: lock/unlock is a closed, open lock, respectively
 
 the last number (0) shall be used in the future, but is not used for now.
 
-The images (img,pic1.png,0) must exist in `dicum/resources/images/`. Since, I have not checked any image copyrights, you'll have to add your own teaser images to the following dir:
+The images (img,pic1.png,0) must exist in `dicum/resources/images/`. I have not checked any image copyrights, so you'll have to add your own teaser images to the following dir:
 ```
 /path/to/game/dicum/resources/images/
 ```
