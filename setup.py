@@ -16,11 +16,11 @@ setuptools.setup(
 	package_dir={'Dicum': 'Dicum'},
 	package_data={
 		'Dicum': ['resources/templates/*', 'resources/js/*.js', 'resources/icons/*', 'resources/fonts/*']},
-	data_files=[()]
-classifiers = [
-	              "Programming Language :: Python :: 3",
-	              "License :: GPLv3 License",
-	              "Operating System :: OS Independent",
-              ],
-              python_requires = '>=3.6',
+	data_files=[('resources', ['game.csv'])],
+	classifiers=[
+		"Programming Language :: Python :: 3",
+		"License :: GPLv3 License",
+		"Operating System :: OS Independent",
+	],
+	python_requires='>=3.6',
 )
