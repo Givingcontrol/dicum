@@ -19,8 +19,12 @@ setuptools.setup(
 	data_files=[('resources', ['game.csv'])],
 	classifiers=[
 		"Programming Language :: Python :: 3",
-		"License :: GPLv3 License",
+		"License :: OSI Approved :: GNU Affero General Public License v3",
 		"Operating System :: OS Independent",
+		'Intended Audience :: End Users/Desktop',
+		"Topic :: Games/Entertainment :: Role-Playing",
+		"Development Status :: 3 - Alpha",
+		"Natural Language :: English"
 	],
 	python_requires='>=3.6',
 )
