@@ -18,6 +18,15 @@ class Configuration:
 				with open(self.LOCK_TIME_LOCATION, "w+"):
 					pass
 
+			self.GAME_CONFIG = os.path.join(self.CONFIG, "game.csv")
+			if not os.path.isfile(self.GAME_CONFIG):
+				with open(self.GAME_CONFIG, "w+"):
+					pass
+
+			self.RESOURCES = os.path.join(self.CONFIG, "resources")
+			if not os.path.isdir(self.RESOURCES):
+				os.makedirs(self.RESOURCES)
+
 			with tempfile.TemporaryDirectory() as temp_dir:
 				self.TEMP_LOCATION = temp_dir
 				print('created temporary directory', temp_dir)
