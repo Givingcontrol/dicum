@@ -9,7 +9,7 @@ class Configuration:
 			self.UNLOCK_LIMIT = 2
 
 			self.HOME = os.getenv('HOME')
-			self.CONFIG = os.path.join(self.HOME, ".config/dicum/");
+			self.CONFIG = os.path.join(self.HOME, ".config", "dicum");
 			if not os.path.isdir(self.CONFIG):
 				os.makedirs(self.CONFIG)
 
