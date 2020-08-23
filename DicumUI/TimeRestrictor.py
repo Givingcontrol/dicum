@@ -7,7 +7,6 @@ from Configuration import Configuration
 
 class TimeRestrictor():
 	def __init__(self):
-		self.TIME_FORMAT = Configuration().TIME_FORMAT
 		self.BASE_FORMAT = "%H:%M:%S"
 
 		self.current_restriction_time = timedelta(hours=1)

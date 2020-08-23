@@ -1,19 +1,29 @@
 import os
+import tempfile
 
 
 class Configuration:
 	class __Configuration:
 		def __init__(self):
-			if os.name != "posix":
-				print("Only linux systems are currently supported.")
-				exit(1)
 			self.LOCK_LIMIT = 2
 			self.UNLOCK_LIMIT = 2
-			self.TIME_FORMAT = "%y-%m-%d %H:%M:%S"
-			self.TEMP_LOCATION = "/tmp/.dicum"
+
+			self.HOME = os.getenv('HOME')
+			self.CONFIG = os.path.join(self.HOME, ".config/dicum/");
+			if not os.path.isdir(self.CONFIG):
+				os.makedirs(self.CONFIG)
+
+			self.LOCK_TIME_LOCATION = os.path.join(self.CONFIG, "time")
+			if not os.path.isfile(self.LOCK_TIME_LOCATION):
+				with open(self.LOCK_TIME_LOCATION, "w+"):
+					pass
+
+			with tempfile.TemporaryDirectory() as temp_dir:
+				self.TEMP_LOCATION = temp_dir
+				print('created temporary directory', temp_dir)
+
 			self.TEMP_IMAGES = os.path.join(self.TEMP_LOCATION, "images")
 			self.TEMP_SCRIPTS = os.path.join(self.TEMP_LOCATION, "js")
-			self.LOCK_TIME_LOCATION = "/var/lib/dicum/dicum"
 			self.HTML_REL_PATH = "file://" + self.TEMP_LOCATION + "/"
 			self.BG_IMAGE = "images/bg03.png"
 			try:
