@@ -14,11 +14,13 @@ setuptools.setup(
 	url="https://github.com/joka-beep/dicum",
 	packages=setuptools.find_packages(),
 	package_dir={'Dicum': 'Dicum'},
-	package_data={'Dicum': ['resources/*.dat']},
-	classifiers=[
-		"Programming Language :: Python :: 3",
-		"License :: GPLv3 License",
-		"Operating System :: OS Independent",
-	],
-	python_requires='>=3.6',
+	package_data={
+		'Dicum': ['resources/templates/*', 'resources/js/*.js', 'resources/icons/*', 'resources/fonts/*']},
+	data_files=[()]
+classifiers = [
+	              "Programming Language :: Python :: 3",
+	              "License :: GPLv3 License",
+	              "Operating System :: OS Independent",
+              ],
+              python_requires = '>=3.6',
 )
