@@ -179,10 +179,9 @@ class MainGameWidget(QWidget):
 class MainWindow(QMainWindow):
 	def __init__(self, *args, **kwargs):
 		super(MainWindow, self).__init__(*args, **kwargs)
-
 		self.setWindowTitle("Dicum")
 		self.menuBar().addMenu("Dicum")
-		self.main_widget = MainGameWidget(sys.argv[1])
+		self.main_widget = MainGameWidget(sys.argv[1] if len(sys.argv) > 1 else Configuration().GAME_CONFIG)
 		self.setCentralWidget(self.main_widget)
 		self.setGeometry(0, 0, 1500, 1250)
 

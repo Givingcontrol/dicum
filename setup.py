@@ -6,8 +6,8 @@ with open("README.md", "r") as fh:
 setuptools.setup(
 	name="dicum",
 	version="0.1",
-	author="Jonas Kalinka",
-	author_email="jonas.kalinka@web.com",
+	author="Jas Nombre",
+	author_email="jas.nombre@web.com",
 	description="A keyholding game for chastity fetishists",
 	long_description=long_description,
 	long_description_content_type="text/markdown",
@@ -16,7 +16,7 @@ setuptools.setup(
 	classifiers=[
 		"Programming Language :: Python :: 3",
 		"License :: GPLv3 License",
-		"Operating System :: Linux",
+		"Operating System :: OS Independent",
 	],
 	python_requires='>=3.6',
 )
