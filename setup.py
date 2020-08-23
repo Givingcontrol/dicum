@@ -13,6 +13,8 @@ setuptools.setup(
 	long_description_content_type="text/markdown",
 	url="https://github.com/joka-beep/dicum",
 	packages=setuptools.find_packages(),
+	package_dir={'Dicum': 'Dicum'},
+	package_data={'Dicum': ['resources/*.dat']},
 	classifiers=[
 		"Programming Language :: Python :: 3",
 		"License :: GPLv3 License",
