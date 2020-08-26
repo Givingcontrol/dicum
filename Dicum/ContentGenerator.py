@@ -17,8 +17,9 @@ class ContentGenerator:
 		self.commands = self.__get_commands()
 
 		try:
-			copy2("resources/js/updateTime.js", Configuration().TEMP_LOCATION + "/js/updateTime.js")
-			copy2(os.path.join("resources", Configuration().BG_IMAGE), Configuration().TEMP_IMAGES + "/")
+			copy2(os.path.join(Configuration().RESOURCES, "js", "updateTime.js"),
+			      Configuration().TEMP_LOCATION + "/js/updateTime.js")
+			copy2(os.path.join(Configuration().RESOURCES, Configuration().BG_IMAGE), Configuration().TEMP_IMAGES + "/")
 		except FileNotFoundeError:
 			logging.critical("Content could not be loaded. file not found error")
 			exit(1)
@@ -55,7 +56,8 @@ class ContentGenerator:
 			img_file_name = content.strip()
 			if not os.path.isfile(os.path.join(Configuration().TEMP_IMAGES, img_file_name)):
 				try:
-					copy2("resources/images/" + img_file_name, Configuration().TEMP_IMAGES + "/")
+					copy2(os.path.join(Configuration().RESOURCES, "images", img_file_name),
+					      Configuration().TEMP_IMAGES + "/")
 				except FileNotFoundError:
 					logging.error("Image file could not be found:", img_file_name)
 			return "html", template.render(image_filename="images/" + img_file_name), time
