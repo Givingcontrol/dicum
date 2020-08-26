@@ -1,6 +1,10 @@
 #!/bin/python3
 
 import sys
+import os
+import logging
+import tempfile
+
 from functools import partial
 from datetime import datetime
 
@@ -18,7 +22,8 @@ from LockCounterWidget import LockCounterWidget
 class StyledPushButton(QPushButton):
 	def __init__(self, *args, **kwargs):
 		super(QPushButton, self).__init__(*args, **kwargs)
-		self.setStyleSheet(":enabled { color: white; background-color: darkred } :disabled { color: #222222 }")
+		self.setStyleSheet(
+			":enabled { color: white; background-color: darkred } :disabled { color: #222222; background-color: gray; }")
 
 
 class MainGameWidget(QWidget):
@@ -44,7 +49,7 @@ class MainGameWidget(QWidget):
 		lock_counter = self.findChild(LockCounterWidget, "lock_counter")
 		if lock_counter:
 			lock_counter.reset()
-		self.generator = ContentGenerator(self.commands_file)
+		self.generator = ContentGenerator(os.path.join(Configuration().CONFIG, self.commands_file))
 
 	def __setup_ui(self):
 		# calculate button row and column length based on number of commands
@@ -53,7 +58,6 @@ class MainGameWidget(QWidget):
 		self.button_rows = self.isqrt(self.generator.get_size())
 		self.button_cols = self.button_rows if self.button_rows * (
 				self.button_rows + 1) > self.generator.get_size() else self.button_rows + 1
-
 		self.button_widget = QWidget(self)
 		self.button_widget.setFixedSize(500, 130)
 		self.button_widget.setLayout(QGridLayout())
@@ -124,9 +128,9 @@ class MainGameWidget(QWidget):
 						                                       text="Lucky you! Maybe I'll release you this time."),
 						QUrl(Configuration().HTML_REL_PATH))
 			else:
-				print("lock value invalid, ignoring")
+				logging.info("lock value invalid, ignoring")
 		else:
-			print("content kind was not recognized:", kind, content)
+			logging.info("content kind was not recognized:", kind, content)
 
 	def update_welcome(self, timer=None):
 		if self.time_restrictor.is_restricted():
@@ -143,13 +147,13 @@ class MainGameWidget(QWidget):
 				timer.stop()
 
 	def start_restriction(self):
-		print("Start Restriction")
+		logging.info("Start Restriction")
 		self.time_restrictor.store_restriction_time()
 		self.__reset()
 		self.__run_ui()
 
 	def stop_restriction(self):
-		print("Stop Restriction")
+		logging.info("Stop Restriction")
 		self.time_restrictor.store_restriction_time(datetime.now())
 		self.__reset()
 		self.__run_ui()
@@ -159,14 +163,14 @@ class MainGameWidget(QWidget):
 			try:
 				self.button_widget.layout().itemAt(button_number).widget().setEnabled(True)
 			except AttributeError:
-				print("Non-button element in button widget, could not be disabled.")
+				logging.error("Non-button element in button widget, could not be disabled.")
 
 	def deactivate_buttons(self):
 		for button_number in range(self.button_widget.layout().count()):
 			try:
 				self.button_widget.layout().itemAt(button_number).widget().setEnabled(False)
 			except AttributeError:
-				print("Non-button element in button widget, could not be disabled.")
+				logging.error("Non-button element in button widget, could not be disabled.")
 
 	@staticmethod
 	def isqrt(n):
@@ -182,7 +186,7 @@ class MainWindow(QMainWindow):
 	def __init__(self, *args, **kwargs):
 		super(MainWindow, self).__init__(*args, **kwargs)
 		self.setWindowTitle("Dicum")
-		self.menuBar().addMenu("Dicum")
+		# self.menuBar().addMenu("Dicum")
 		self.main_widget = MainGameWidget(sys.argv[1] if len(sys.argv) > 1 else Configuration().GAME_CONFIG)
 		self.setCentralWidget(self.main_widget)
 		self.setGeometry(0, 0, 1500, 1250)
@@ -197,6 +201,9 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == '__main__':
+	logging.basicConfig(filename=tempfile.TemporaryFile().name, level=logging.INFO)
+	# logging.basicConfig(level=logging.DEBUG)
+
 	app = QApplication([])
 	app.setStyleSheet(
 		"QPushButton { background-color: darkred; color: black } QMainWindow { background-color: black }")

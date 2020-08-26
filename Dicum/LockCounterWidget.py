@@ -1,3 +1,5 @@
+import logging
+
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, \
 	QSpacerItem, QSizePolicy, QLabel
@@ -27,6 +29,7 @@ class LockCounterWidget(QWidget):
 		self.layout().addItem(QSpacerItem(10, 1, QSizePolicy.Expanding, QSizePolicy.Preferred))
 
 	def reset(self):
+		logging.debug("Lock Counter Widget Resetting.")
 		self.current_locked = len(self.locked) - 1
 		self.current_unlocked = 0
 
@@ -41,7 +44,7 @@ class LockCounterWidget(QWidget):
 		try:
 			self.locked[self.current_locked].setPixmap(QtGui.QPixmap("resources/icons/lock_icon_closed_64.png"))
 		except IndexError:
-			print("exceeding locked images range. there is a bug somewhere...")
+			logging.critical("exceeding locked images range. there is a bug somewhere...")
 			return
 		self.current_locked -= 1
 
@@ -49,7 +52,7 @@ class LockCounterWidget(QWidget):
 		try:
 			self.unlocked[self.current_unlocked].setPixmap(QtGui.QPixmap("resources/icons/lock_icon_open_64.png"))
 		except IndexError:
-			print("exceeding unlocked images range. there is a bug somewhere...")
+			logging.critical("exceeding unlocked images range. there is a bug somewhere...")
 			return
 		self.current_unlocked += 1
 

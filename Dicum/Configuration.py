@@ -1,10 +1,11 @@
 import os
 import tempfile
+import logging
 
 
 class Configuration:
 	class __Configuration:
-		def __init__(self):
+		def __init__(self, commands_file=None):
 			self.LOCK_LIMIT = 2
 			self.UNLOCK_LIMIT = 2
 
@@ -12,6 +13,13 @@ class Configuration:
 			self.CONFIG = os.path.join(self.HOME, ".config", "dicum");
 			if not os.path.isdir(self.CONFIG):
 				os.makedirs(self.CONFIG)
+
+			if not commands_file:
+				commands_file = "game.csv"
+			self.COMMANDS = os.path.join(self.CONFIG, commands_file)
+			if not os.path.isfile(self.COMMANDS):
+				logging.critical("Commands not found.")
+				exit(404)
 
 			self.LOCK_TIME_LOCATION = os.path.join(self.CONFIG, "time")
 			if not os.path.isfile(self.LOCK_TIME_LOCATION):
@@ -29,7 +37,7 @@ class Configuration:
 
 			with tempfile.TemporaryDirectory() as temp_dir:
 				self.TEMP_LOCATION = temp_dir
-				print('created temporary directory', temp_dir)
+				logging.info('created temporary directory', temp_dir)
 
 			self.TEMP_IMAGES = os.path.join(self.TEMP_LOCATION, "images")
 			self.TEMP_SCRIPTS = os.path.join(self.TEMP_LOCATION, "js")
@@ -43,7 +51,7 @@ class Configuration:
 				pass
 
 			if not os.path.isfile(self.LOCK_TIME_LOCATION):
-				print("Dicum time file does not exist.")
+				logging.critical("Dicum time file does not exist.")
 
 		def __str__(self):
 			return repr(self) + self.val
