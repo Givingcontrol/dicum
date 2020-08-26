@@ -1,5 +1,5 @@
 import os
-
+import logging
 from datetime import datetime, timedelta
 
 from Configuration import Configuration
@@ -25,7 +25,7 @@ class TimeRestrictor():
 		try:
 			self.restriction_endtime = datetime.fromisoformat(restriction_time)
 		except ValueError:
-			print("Restriction time could not be retrieved from storage.")
+			logging.error("Restriction time could not be retrieved from storage.")
 
 	def get_end_time_iso(self):
 		return self.restriction_endtime.isoformat()
@@ -55,5 +55,5 @@ class TimeRestrictor():
 		try:
 			time_delta = timedelta(hours=int(time_string))
 		except ValueError:
-			print("Time string could not be parsed to integer (hours):", time_string)
+			logging.error("Time string could not be parsed to integer (hours):", time_string)
 		return time_delta

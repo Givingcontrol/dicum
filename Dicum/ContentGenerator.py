@@ -1,6 +1,8 @@
 import csv
 import random
 import os
+import logging
+
 from shutil import copy2
 
 from jinja2 import Environment, FileSystemLoader
@@ -10,15 +12,15 @@ from Configuration import Configuration
 
 class ContentGenerator:
 	def __init__(self, commands_filename):
-		resource_dir = "resources"
+		resource_dir = Configuration().RESOURCES
 		self.env = Environment(loader=FileSystemLoader(resource_dir))
-		self.commands = self.__get_commands(os.path.join(commands_filename))
+		self.commands = self.__get_commands()
 
 		try:
 			copy2("resources/js/updateTime.js", Configuration().TEMP_LOCATION + "/js/updateTime.js")
 			copy2(os.path.join("resources", Configuration().BG_IMAGE), Configuration().TEMP_IMAGES + "/")
 		except FileNotFoundeError:
-			print("Content could not be loaded. file not found error")
+			logging.critical("Content could not be loaded. file not found error")
 			exit(1)
 
 	def get_size(self):
@@ -28,7 +30,7 @@ class ContentGenerator:
 		try:
 			return self.commands.pop()
 		except IndexError:
-			print("get_next failed, no more elements to pop")
+			logging.error("get_next failed, no more elements to pop")
 			return None
 
 	def get_restricted(self, end_time_iso):
@@ -45,11 +47,8 @@ class ContentGenerator:
 		return template.render(current_restriction_time=time_string, background_image=Configuration().BG_IMAGE,
 		                       text=text)
 
-	@staticmethod
-	def __interpret_command(command):
-		template_dir = "resources"
-		env = Environment(loader=FileSystemLoader(template_dir))
-		template = env.get_template("templates/plain_image.html")
+	def __interpret_command(self, command):
+		template = self.env.get_template("templates/plain_image.html")
 
 		kind, content, time = command
 		if kind == "img":
@@ -58,22 +57,17 @@ class ContentGenerator:
 				try:
 					copy2("resources/images/" + img_file_name, Configuration().TEMP_IMAGES + "/")
 				except FileNotFoundError:
-					print("Image file could not be found:", img_file_name)
+					logging.error("Image file could not be found:", img_file_name)
 			return "html", template.render(image_filename="images/" + img_file_name), time
 		else:
 			return command
 
-	@staticmethod
-	def __create_temp_html():
-		pass
-
-	@staticmethod
-	def __get_commands(commands_filename):
+	def __get_commands(self):
 		commands = []
-		with open(commands_filename) as csv_file:
+		with open(Configuration().COMMANDS) as csv_file:
 			reader = csv.reader(csv_file, delimiter=",")
 			for row in reader:
-				commands.append(ContentGenerator.__interpret_command(row))
+				commands.append(self.__interpret_command(row))
 
 		random.shuffle(commands)
 		return commands
