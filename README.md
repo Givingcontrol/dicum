@@ -22,31 +22,20 @@ If you draw open locks, you get released and can do whatever you want until you 
 
 The installation is only possible on linux system at the moment and is not streamlined, yet. 
 
-If you want to try the game, I might provide you with a test .zip file, however, image copyrights are not checked. In case of any trouble, send me a message on github or email me.
+* Install python3 `sudo apt install python3`
+* Clone the repository `git clone ... && cd dicum`
+* Create a virtual environment for python `python3 -m venv venv`
+* Source the environment `source venv/bin/activate`
+* Install requirements from requirements.txt `pip install ...`
+* Run the game
 
-* Clone the repository
-* Create a virtual environment for python
-* Source the environment
-* Install requirements from requirements.txt
-
-In order to run the game create a folder to store the game state, you might need to edit user priviledges and ownershipt to your current user.
-```
-$ sudo mkdir /var/lib/dicum/
-```
-
-Install fonts:
-```
-$ rsync -a ../dicum/fonts/ ~/.fonts
+```bash
+$ python DicumUI/DicumUI.py
 ```
 
-Create a csv file that holds all possible actions:
-```
-$ cd /path/to/game/dicum
-$ touch /resources/actions.csv
-```
-
-possible content: 
-```
+When you run the program for the first time, it will create the directory `~/.config/dicum` in which the program stores all resources.
+Create a file `game.csv` and add for example the following commands: 
+```csv
 img,pic1.png,0
 img,pic2.png,0
 img,pic3.png,0
@@ -60,18 +49,26 @@ lock,unlock,0
 lock,lock,0
 lock,lock,0
 ```
+
 img : image name
 num : number of hours added to your lockup time
 lock: lock/unlock is a closed, open lock, respectively
+the last number (currently 0 everywhere) shall be used in the future, but is not used for now.
 
-the last number (0) shall be used in the future, but is not used for now.
+The images (pic1.png, pic2.png, pic3.png) must exist in `~/.config/dicum/resources/images/`. I have not checked any image copyrights, so you'll have to add your own images.
 
-The images (img,pic1.png,0) must exist in `dicum/resources/images/`. I have not checked any image copyrights, so you'll have to add your own teaser images to the following dir:
-```
-/path/to/game/dicum/resources/images/
+If you want to run the game from executable, run the following commands, while you have sourced your venv:
+```bash
+$ pip install pyinstaller
+$ cd Dicum/
+$ pyinstaller --onefile -w Dicum.py
+$ mkdir ~/bin
+$ mv dist/Dicum ~/bin/
 ```
 
-when you sourced your environment, run the game using
+Now you should be able to run the program from anywhere using
+```bash
+$ Dicum
 ```
-$ python DicumUI/DicumUI.py recourses/actions.csv
-```
+
+
