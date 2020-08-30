@@ -49,7 +49,7 @@ class MainGameWidget(QWidget):
 		lock_counter = self.findChild(LockCounterWidget, "lock_counter")
 		if lock_counter:
 			lock_counter.reset()
-		self.generator = ContentGenerator(os.path.join(Configuration().CONFIG, self.commands_file))
+		self.generator = ContentGenerator()
 
 	def __setup_ui(self):
 		# calculate button row and column length based on number of commands

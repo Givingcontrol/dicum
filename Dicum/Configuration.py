@@ -45,11 +45,19 @@ class Configuration:
 				with open(self.LOCK_TIME_LOCATION, "w+") as file:
 					file.write(datetime.now().isoformat())
 
-			self.BASE_RESOURCES = resource_path("")
+			# Can be changed by the used and during runtime - e.g. Images etc...
 			self.RESOURCES = os.path.join(self.CONFIG, "resources")
 			if not os.path.isdir(self.RESOURCES):
 				os.makedirs(self.RESOURCES)
 
+			self.IMAGES = os.path.join(self.RESOURCES, "images")
+			if not os.path.isdir(self.IMAGES):
+				os.makedirs(self.IMAGES)
+				copy2(os.path.join(Configuration().BASE_RESOURCES, "images", "README"), self.IMAGES + "/")
+				copy2(os.path.join(Configuration().BASE_RESOURCES, "images", "bg.png"), self.IMAGES + "/")
+
+			# Cannot be changed by the user, icons, templates etc...
+			self.BASE_RESOURCES = resource_path("resources")
 			self.SCRIPTS = os.path.join(self.BASE_RESOURCES, "js")
 			if not os.path.isdir(self.SCRIPTS):
 				logging.error("Scripts not found. Continuing but errors might occur.")
@@ -61,12 +69,6 @@ class Configuration:
 			self.ICONS = os.path.join(self.BASE_RESOURCES, "icons")
 			if not os.path.isdir(self.ICONS):
 				logging.error("Icons not found. Continuing but errors might occur.")
-
-			self.IMAGES = os.path.join(self.RESOURCES, "images")
-			if not os.path.isdir(self.IMAGES):
-				os.makedirs(self.IMAGES)
-				copy2(os.path.join(Configuration().BASE_RESOURCES, "images", "README"), self.IMAGES + "/")
-				copy2(os.path.join(Configuration().BASE_RESOURCES, "images", "bg.png"), self.IMAGES + "/")
 
 			with tempfile.TemporaryDirectory() as temp_dir:
 				self.TEMP_LOCATION = temp_dir
