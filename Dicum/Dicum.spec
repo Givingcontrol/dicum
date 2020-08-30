@@ -3,12 +3,12 @@
 block_cipher = None
 
 resources = [
-        ("resources/fonts", "fonts"),
-        ("resources/icons", "icons"),
-        ("resources/images/README","images"),
-        ("resources/images/bg.png","images"),
-        ("resources/js", "js"),
-        ("resources/templates", "templates")]
+        ("resources/fonts", "resources/fonts"),
+        ("resources/icons", "resources/icons"),
+        ("resources/images/README","resources/images"),
+        ("resources/images/bg.png","resources/images"),
+        ("resources/js", "resources/js"),
+        ("resources/templates", "resources/templates")]
 
 a = Analysis(['Dicum.py'],
              pathex=['/home/jonas/Projects/dicum/Dicum'],
