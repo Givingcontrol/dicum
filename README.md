@@ -20,18 +20,18 @@ If you draw open locks, you get released and can do whatever you want until you 
 
 ## Installation
 
-The installation is only possible on linux system at the moment and is not streamlined, yet. 
+Option 1 (easy):
+* Download the binary and run it. (Might only work in Linux, I have only tested locally.)
 
+Option 2 (for development): 
 * Install python3 `sudo apt install python3`
 * Clone the repository `git clone ... && cd dicum`
 * Create a virtual environment for python `python3 -m venv venv`
 * Source the environment `source venv/bin/activate`
 * Install requirements from requirements.txt `pip install ...`
-* Run the game
+* Run the game `python3 DicumUI/DicumUI.py`
 
-```bash
-$ python DicumUI/DicumUI.py
-```
+## Configuration
 
 When you run the program for the first time, it will create the directory `~/.config/dicum` in which the program stores all resources.
 Create a file `game.csv` and add for example the following commands: 
