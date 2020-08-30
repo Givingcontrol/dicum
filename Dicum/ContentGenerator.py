@@ -11,13 +11,12 @@ from Configuration import Configuration
 
 
 class ContentGenerator:
-	def __init__(self, commands_filename):
-		resource_dir = Configuration().RESOURCES
-		self.env = Environment(loader=FileSystemLoader(resource_dir))
+	def __init__(self):
+		self.env = Environment(loader=FileSystemLoader(Configuration().TEMPLATES))
 		self.commands = self.__get_commands()
 
 		try:
-			copy2(os.path.join(Configuration().BASE_RESOURCES, "js", "updateTime.js"),
+			copy2(os.path.join(Configuration().SCRIPTS, "updateTime.js"),
 			      os.path.join(Configuration().TEMP_LOCATION, "js", "updateTime.js"))
 			copy2(os.path.join(Configuration().RESOURCES, Configuration().BG_IMAGE), Configuration().TEMP_IMAGES + "/")
 		except FileNotFoundError:
@@ -35,21 +34,21 @@ class ContentGenerator:
 			return None
 
 	def get_restricted(self, end_time_iso):
-		template = self.env.get_template("templates/restricted.html")
+		template = self.env.get_template("restricted.html")
 		return template.render(restricted_time=end_time_iso, background_image=Configuration().BG_IMAGE)
 
 	def get_unrestricted(self):
-		template = self.env.get_template("templates/unrestricted.html")
+		template = self.env.get_template("unrestricted.html")
 		return template.render(background_image=Configuration().BG_IMAGE)
 
 	def get_current_restriction(self, restriction_time, text=""):
 		time_string = str(restriction_time).split(":")[0] + " hours"
-		template = self.env.get_template("templates/restriction_time.html")
+		template = self.env.get_template("restriction_time.html")
 		return template.render(current_restriction_time=time_string, background_image=Configuration().BG_IMAGE,
 		                       text=text)
 
 	def __interpret_command(self, command):
-		template = self.env.get_template("templates/plain_image.html")
+		template = self.env.get_template("plain_image.html")
 
 		kind, content, time = command
 		if kind == "img":

@@ -49,29 +49,24 @@ class Configuration:
 			self.RESOURCES = os.path.join(self.CONFIG, "resources")
 			if not os.path.isdir(self.RESOURCES):
 				os.makedirs(self.RESOURCES)
-			self.SCRIPTS = os.path.join(self.RESOURCES, "js")
-			if not os.path.isdir(self.SCRIPTS):
-				os.makedirs(self.SCRIPTS)
-				for file in os.listdir(os.path.join(Configuration().BASE_RESOURCES, "js")):
-					copy2(os.path.join(Configuration().BASE_RESOURCES, "js", file), self.SCRIPTS + "/")
 
-			self.TEMPLATES = os.path.join(self.RESOURCES, "templates")
+			self.SCRIPTS = os.path.join(self.BASE_RESOURCES, "js")
+			if not os.path.isdir(self.SCRIPTS):
+				logging.error("Scripts not found. Continuing but errors might occur.")
+
+			self.TEMPLATES = os.path.join(self.BASE_RESOURCES, "templates")
 			if not os.path.isdir(self.TEMPLATES):
-				os.makedirs(self.TEMPLATES)
-				for file in os.listdir(os.path.join(Configuration().BASE_RESOURCES, "templates")):
-					copy2(os.path.join(Configuration().BASE_RESOURCES, "templates", file), self.TEMPLATES + "/")
+				logging.error("Templates not found. Continuing but errors might occur.")
+
+			self.ICONS = os.path.join(self.BASE_RESOURCES, "icons")
+			if not os.path.isdir(self.ICONS):
+				logging.error("Icons not found. Continuing but errors might occur.")
 
 			self.IMAGES = os.path.join(self.RESOURCES, "images")
 			if not os.path.isdir(self.IMAGES):
 				os.makedirs(self.IMAGES)
 				copy2(os.path.join(Configuration().BASE_RESOURCES, "images", "README"), self.IMAGES + "/")
 				copy2(os.path.join(Configuration().BASE_RESOURCES, "images", "bg.png"), self.IMAGES + "/")
-
-			self.ICONS = os.path.join(self.RESOURCES, "icons")
-			if not os.path.isdir(self.ICONS):
-				os.makedirs(self.ICONS)
-				for file in os.listdir(os.path.join(Configuration().BASE_RESOURCES, "icons")):
-					copy2(os.path.join(Configuration().BASE_RESOURCES, "icons", file), self.ICONS + "/")
 
 			with tempfile.TemporaryDirectory() as temp_dir:
 				self.TEMP_LOCATION = temp_dir
