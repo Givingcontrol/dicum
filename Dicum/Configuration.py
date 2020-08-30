@@ -1,6 +1,21 @@
 import os
+import sys
 import tempfile
 import logging
+from datetime import datetime
+
+from shutil import copy2
+
+
+def resource_path(relative_path):
+	""" Get absolute path to resource, works for dev and for PyInstaller """
+	try:
+		# PyInstaller creates a temp folder and stores path in _MEIPASS
+		base_path = sys._MEIPASS
+	except Exception:
+		base_path = os.path.abspath(".")
+
+	return os.path.join(base_path, relative_path)
 
 
 class Configuration:
@@ -18,34 +33,64 @@ class Configuration:
 				commands_file = "game.csv"
 			self.COMMANDS = os.path.join(self.CONFIG, commands_file)
 			if not os.path.isfile(self.COMMANDS):
-				logging.critical("Commands not found.")
-				exit(404)
+				with open(self.COMMANDS, "w+") as file:
+					logging.warning("game.csv could not be found. Creating default!")
+					file.write(
+						"num,2,0\nnum,3,0\nnum,5,0\nnum,5,0\nnum,12,0\nlock,unlock,0\nlock,unlock,0\nlock,lock,0\nlock,lock,0")
+
+			self.GAME_CONFIG = self.COMMANDS
 
 			self.LOCK_TIME_LOCATION = os.path.join(self.CONFIG, "time")
 			if not os.path.isfile(self.LOCK_TIME_LOCATION):
-				with open(self.LOCK_TIME_LOCATION, "w+"):
-					pass
+				with open(self.LOCK_TIME_LOCATION, "w+") as file:
+					file.write(datetime.now().isoformat())
 
-			self.GAME_CONFIG = os.path.join(self.CONFIG, "game.csv")
-			if not os.path.isfile(self.GAME_CONFIG):
-				with open(self.GAME_CONFIG, "w+"):
-					pass
-
+			self.BASE_RESOURCES = resource_path("")
 			self.RESOURCES = os.path.join(self.CONFIG, "resources")
 			if not os.path.isdir(self.RESOURCES):
 				os.makedirs(self.RESOURCES)
+			self.SCRIPTS = os.path.join(self.RESOURCES, "js")
+			if not os.path.isdir(self.SCRIPTS):
+				os.makedirs(self.SCRIPTS)
+				for file in os.listdir(os.path.join(Configuration().BASE_RESOURCES, "js")):
+					copy2(os.path.join(Configuration().BASE_RESOURCES, "js", file), self.SCRIPTS + "/")
+
+			self.TEMPLATES = os.path.join(self.RESOURCES, "templates")
+			if not os.path.isdir(self.TEMPLATES):
+				os.makedirs(self.TEMPLATES)
+				for file in os.listdir(os.path.join(Configuration().BASE_RESOURCES, "templates")):
+					copy2(os.path.join(Configuration().BASE_RESOURCES, "templates", file), self.TEMPLATES + "/")
+
+			self.IMAGES = os.path.join(self.RESOURCES, "images")
+			if not os.path.isdir(self.IMAGES):
+				os.makedirs(self.IMAGES)
+				copy2(os.path.join(Configuration().BASE_RESOURCES, "images", "README"), self.IMAGES + "/")
+				copy2(os.path.join(Configuration().BASE_RESOURCES, "images", "bg.png"), self.IMAGES + "/")
+
+			self.ICONS = os.path.join(self.RESOURCES, "icons")
+			if not os.path.isdir(self.ICONS):
+				os.makedirs(self.ICONS)
+				for file in os.listdir(os.path.join(Configuration().BASE_RESOURCES, "icons")):
+					copy2(os.path.join(Configuration().BASE_RESOURCES, "icons", file), self.ICONS + "/")
 
 			with tempfile.TemporaryDirectory() as temp_dir:
 				self.TEMP_LOCATION = temp_dir
-				logging.info('created temporary directory', temp_dir)
+			logging.info('created temporary directory', temp_dir)
 
 			self.TEMP_IMAGES = os.path.join(self.TEMP_LOCATION, "images")
 			self.TEMP_SCRIPTS = os.path.join(self.TEMP_LOCATION, "js")
 			self.HTML_REL_PATH = "file://" + self.TEMP_LOCATION + "/"
-			self.BG_IMAGE = "images/bg03.png"
+			self.BG_IMAGE = "images/bg.png"
+
 			try:
 				os.makedirs(self.TEMP_LOCATION)
+			except FileExistsError:
+				pass
+			try:
 				os.makedirs(self.TEMP_IMAGES)
+			except FileExistsError:
+				pass
+			try:
 				os.makedirs(self.TEMP_SCRIPTS)
 			except FileExistsError:
 				pass

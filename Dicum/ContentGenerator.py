@@ -17,10 +17,10 @@ class ContentGenerator:
 		self.commands = self.__get_commands()
 
 		try:
-			copy2(os.path.join(Configuration().RESOURCES, "js", "updateTime.js"),
-			      Configuration().TEMP_LOCATION + "/js/updateTime.js")
+			copy2(os.path.join(Configuration().BASE_RESOURCES, "js", "updateTime.js"),
+			      os.path.join(Configuration().TEMP_LOCATION, "js", "updateTime.js"))
 			copy2(os.path.join(Configuration().RESOURCES, Configuration().BG_IMAGE), Configuration().TEMP_IMAGES + "/")
-		except FileNotFoundeError:
+		except FileNotFoundError:
 			logging.critical("Content could not be loaded. file not found error")
 			exit(1)
 

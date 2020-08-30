@@ -194,10 +194,9 @@ class MainWindow(QMainWindow):
 		self.show()
 
 	def closeEvent(self, event):
-		# do stuff
 		if self.main_widget.time_restrictor.restriction_time_changed:
 			self.main_widget.time_restrictor.store_restriction_time()
-		event.accept()  # let the window close
+		event.accept()
 
 
 if __name__ == '__main__':
