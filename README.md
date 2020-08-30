@@ -1,6 +1,6 @@
 # Dicum
 
-Dicum is a small game for tease and denial lovers, that like to get locked up. 
+Dicum is a small game for tease and denial lovers that like to get locked up. 
 
 ![Game Preview](https://github.com/joka-beep/dicum/blob/master/preview/preview-alpha.png)
 
